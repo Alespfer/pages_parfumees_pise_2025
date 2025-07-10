@@ -1,0 +1,15 @@
+<?php
+// /partials/views/_sidebar_bougies.php (Version finale)
+?>
+<div class="filter-sidebar">
+    <h4>Filtrer par</h4>
+    <div class="filter-group">
+        <h5>Ambiance</h5>
+        <?php foreach ($view_data['ambiances'] as $ambiance): ?>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="ambiances[]" value="<?= $ambiance['id_tag'] ?>" id="ambiance_<?= $ambiance['id_tag'] ?>" <?= in_array($ambiance['id_tag'], $filters['ambiances']) ? 'checked' : '' ?>>
+                <label class="form-check-label" for="ambiance_<?= $ambiance['id_tag'] ?>"><?= htmlspecialchars($ambiance['nom_tag']) ?></label>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
