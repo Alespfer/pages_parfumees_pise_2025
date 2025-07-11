@@ -126,8 +126,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <?php if ($isConnected) { ?>
                                 <!-- Utilisateur connecté -->
                                 <div class="alert alert-info">
-                                    Bonjour <strong><?php echo htmlspecialchars($name); ?></strong> !<br>
-                                    Nous sommes à votre écoute.
+                                    Bonjour <strong><?php echo htmlspecialchars($name); ?></strong><br>
+                                    Ravis de vous retrouver ! Nous sommes à votre écoute pour toute question ou suggestion.
+
                                 </div>
                                 <input type="hidden" name="name"  value="<?php echo htmlspecialchars($name); ?>">
                                 <input type="hidden" name="email" value="<?php echo htmlspecialchars($email); ?>">
