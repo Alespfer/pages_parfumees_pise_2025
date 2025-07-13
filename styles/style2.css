@@ -1,0 +1,306 @@
+/* --- Importation des polices depuis Google Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;500;600&display=swap');
+
+/* --- Variables et Styles Globaux --- */
+:root {
+    --bg-color: #F8F5F0; /* Couleur crème/beige de fond */
+    --text-color: #3A3A3A; /* Gris foncé pour le texte */
+    --font-serif: 'Playfair Display', serif;
+    --font-sans: 'Lato', sans-serif;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+a {
+    color: var(--text-color);
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+a:hover {
+    opacity: 0.7;
+}
+
+h1, h2, h3, h4 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    margin-top: 0;
+}
+
+/* --- Section Héros (Bannière) --- */
+/* Note: Le fil d'Ariane n'est pas dans la capture, je le masque. */
+.hero-section .breadcrumb {
+    display: none;
+}
+
+.hero-section {
+    text-align: center;
+    padding: 80px 0 60px;
+}
+
+.hero-title {
+    font-size: 3rem; /* 48px */
+    margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+    font-size: 1.125rem; /* 18px */
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Le bouton n'est pas dans le design, masquons-le aussi */
+.hero-section .btn {
+    display: none;
+}
+
+/* --- Section Introduction de l'histoire --- */
+.about-intro-section {
+    padding: 60px 0;
+    text-align: center;
+}
+
+/* Le layout a changé par rapport au texte: titre sous le paragraphe */
+.about-intro-grid {
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+.about-intro-text p {
+    font-size: 1rem; /* 16px */
+    line-height: 1.8;
+    margin-bottom: 3rem;
+}
+
+.about-intro-title h2 {
+    font-size: 2.5rem; /* 40px */
+}
+
+/* --- Section Qui Sommes-Nous ? (L'équipe) --- */
+.team-section {
+    padding: 60px 0;
+}
+
+.team-section > .container > h2,
+.team-section > .container > .team-description {
+    text-align: center;
+}
+
+.team-section > .container > h2 {
+    font-size: 2.5rem; /* 40px */
+    margin-bottom: 1rem;
+}
+
+.team-section > .container > .team-description {
+    max-width: 500px;
+    margin: 0 auto 60px auto;
+    line-height: 1.7;
+}
+
+/* Grille pour aligner les membres */
+.team-member {
+    display: grid;
+    grid-template-columns: 200px 1fr; /* Colonne pour l'image, colonne pour le texte */
+    gap: 40px;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+/* Inverse la disposition pour le deuxième membre */
+.team-member:nth-child(odd) {
+    grid-template-columns: 1fr 200px; /* Colonne texte, colonne image */
+}
+.team-member:nth-child(odd) .team-member-info {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+/* Simulation de l'espace pour l'image */
+.team-member::before {
+    content: '';
+    display: block;
+    width: 200px;
+    height: 250px;
+    background-color: #E0E0E0; /* Gris clair pour le placeholder de l'image */
+    grid-column: 1;
+    grid-row: 1;
+}
+.team-member:nth-child(odd)::before {
+    grid-column: 2;
+}
+
+.team-member h3 {
+    font-size: 1.75rem; /* 28px */
+    margin-bottom: 0.5rem;
+}
+
+.team-member-role {
+    font-style: italic;
+    margin-bottom: 1rem;
+}
+
+.team-member p {
+    line-height: 1.7;
+}
+
+
+/* --- Section Promesses --- */
+.promises-section {
+    padding: 80px 0;
+    text-align: center;
+}
+
+.promises-section h2 {
+    font-size: 2.5rem; /* 40px */
+    margin-bottom: 60px;
+}
+
+.promises-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+}
+
+.promise-item .promise-icon {
+    height: 60px;
+    margin-bottom: 20px;
+    /* Styles pour vos icônes, par ex. en utilisant background-image */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Pour simuler les icônes de la maquette */
+.promise-item:nth-child(1) .promise-icon { background-image: url('https://i.imgur.com/r6wZ8lF.png'); /* Remplacez par votre icône */ }
+.promise-item:nth-child(2) .promise-icon { background-image: url('https://i.imgur.com/rN4g8YJ.png'); /* Remplacez par votre icône */ }
+.promise-item:nth-child(3) .promise-icon { background-image: url('https://i.imgur.com/dK3fCqG.png'); /* Remplacez par votre icône */ }
+
+
+.promise-item h3 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.promise-item p {
+    font-size: 0.875rem; /* 14px */
+    line-height: 1.6;
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+.promise-item a {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.875rem;
+    text-decoration: underline;
+}
+
+/* --- Section Pré-Footer --- */
+.pre-footer-section {
+    padding: 60px 0;
+    border-top: 1px solid #ddd;
+}
+
+.pre-footer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+}
+
+.footer-column h4 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-column ul li {
+    margin-bottom: 1rem;
+}
+
+.footer-column p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.newsletter-form {
+    display: flex;
+    margin-top: 1rem;
+}
+
+.newsletter-form input {
+    flex-grow: 1;
+    border: none;
+    border-bottom: 1px solid var(--text-color);
+    background: transparent;
+    padding: 10px 0;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+}
+.newsletter-form input:focus {
+    outline: none;
+}
+
+.newsletter-form button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    padding: 10px;
+}
+
+/* --- Responsive Design (pour tablettes et mobiles) --- */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    .about-intro-title h2,
+    .team-section > .container > h2,
+    .promises-section h2 {
+        font-size: 2rem;
+    }
+    
+    /* Passage des grilles en une seule colonne */
+    .team-member,
+    .team-member:nth-child(odd) {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .team-member::before {
+        margin: 0 auto 20px auto;
+        grid-column: 1; /* Reset */
+    }
+     .team-member:nth-child(odd) .team-member-info {
+        grid-column: 1;
+    }
+    
+    .promises-grid,
+    .pre-footer-grid {
+        grid-template-columns: 1fr;
+        gap: 50px;
+    }
+}

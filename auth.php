@@ -1,23 +1,23 @@
 <?php
 /*
  * Fichier : auth.php
- * Rôle : Contrôleur central pour l'authentification des utilisateurs.
- * Ce script gère la connexion, l'inscription, la déconnexion et la
- * réinitialisation du mot de passe en utilisant uniquement les syntaxes
- * et mécanismes algorithmiques enseignés.
+ * Rôle : Contrôleur central pour l'authentification des utilisateurs (clients).
+ * Ce fichier est le point d'entrée unique pour tout ce qui concerne le compte utilisateur :
+ *  - Connexion (login)
+ *  - Inscription (register)
+ *  - Déconnexion (logout)
+ *  - Procédure de mot de passe oublié (forgot/reset)
+ * Il utilise une structure de type "switch" pour aiguiller l'utilisateur vers la bonne action.
  */
 
 session_start();
 
+// Inclusion des dépendances
 require('parametrage/param.php');
 require('fonction/fonctions.php');
 
-// --- DÉCLARATION DES FONCTIONS DE PURIFICATION ---
-// Ces fonctions sont ajoutées pour remplacer des fonctions PHP non enseignées,
-// garantissant ainsi le respect de la doctrine tout en maintenant les fonctionnalités.
-
-
 // --- INITIALISATION DES VARIABLES ---
+// On prépare les variables qui seront utilisées dans les différentes vues.
 $action = isset($_GET['action']) ? $_GET['action'] : 'login';
 $pageTitle = '';
 $message_succes = '';
@@ -28,28 +28,38 @@ $pdo = getPDO();
 // --- ROUTEUR PRINCIPAL ---
 switch ($action) {
     case 'logout':
+        // Action de déconnexion : on détruit la session.
         $_SESSION = array();
         session_destroy();
+        // On redirige vers la page de connexion avec un message de succès.
         header('Location: auth.php?action=login&status=logout');
         exit();
 
     case 'register':
+        // Action d'inscription.
         $pageTitle = "Créer un compte";
+        // Si l'utilisateur est déjà connecté, on le redirige vers son compte.
+
         if (isset($_SESSION['user'])) {
             header('Location: mon_compte.php');
             exit();
         }
 
+        // On initialise les variables pour pré-remplir le formulaire en cas d'erreur.
+
         $nom = '';
         $prenom = '';
         $email = '';
 
+        // On vérifie si le formulaire a été soumis.
         if (isset($_POST['email'])) {
             $nom = purifier_trim(isset($_POST['nom']) ? $_POST['nom'] : '');
             $prenom = purifier_trim(isset($_POST['prenom']) ? $_POST['prenom'] : '');
             $email = purifier_trim(isset($_POST['email']) ? $_POST['email'] : '');
             $mot_de_passe = isset($_POST['password']) ? $_POST['password'] : '';
             $mot_de_passe_confirmation = isset($_POST['password_confirm']) ? $_POST['password_confirm'] : '';
+
+            // Validation des champs (non-vides).
 
             if ($nom == '') {
                 $erreurs[] = "Le nom est requis.";
@@ -60,6 +70,8 @@ switch ($action) {
             if ($email == '') {
                 $erreurs[] = "L'adresse e-mail est requise.";
             }
+
+            // Validation de la correspondance et de la force du mot de passe.
 
             if ($mot_de_passe != $mot_de_passe_confirmation) {
                 $erreurs[] = "Les mots de passe ne correspondent pas.";
@@ -84,9 +96,13 @@ switch ($action) {
         break;
 
     case 'forgot':
+    // Action pour la demande de réinitialisation de mot de passe.
         $pageTitle = "Mot de passe oublié";
-        $jeton_genere = null; // Variable pour passer le jeton à la vue.
-
+        $jeton_genere = null; // Variable pour afficher le lien de test dans la vue.
+        /*
+        On affiche un message générique pour ne pas révéler si un e-mail existe ou non dans la BDD. $message_succes = "Si un compte est associé à cette adresse, des instructions ont été envoyées.";
+        En réalité, il faudrait envoyer un vrai e-mail ici. Pour le test, on se contente de générer le jeton et de l'afficher.
+         */
         if (isset($_POST['email'])) {
             $email = purifier_trim(isset($_POST['email']) ? $_POST['email'] : '');
             if ($email != '') {
@@ -103,6 +119,7 @@ switch ($action) {
         break;
 
     case 'reset':
+        // Action pour la réinitialisation effective du mot de passe.
         $pageTitle = "Nouveau mot de passe";
         $jeton = isset($_GET['token']) ? $_GET['token'] : '';
         $utilisateur = getClientByResetToken($jeton);
@@ -112,9 +129,13 @@ switch ($action) {
             $erreurs[] = "Ce lien de réinitialisation est invalide ou a expiré.";
         }
 
+        // Si le jeton est valide ET que le formulaire de nouveau mot de passe est soumis.
+
         if ($jeton_valide && isset($_POST['password'])) {
             $pwd1 = isset($_POST['password']) ? $_POST['password'] : '';
             $pwd2 = isset($_POST['password_confirm']) ? $_POST['password_confirm'] : '';
+
+            // Validation de la correspondance et de la force du nouveau mot de passe.
 
             if ($pwd1 != $pwd2) {
                 $erreurs[] = "Les mots de passe ne correspondent pas.";
@@ -146,6 +167,8 @@ switch ($action) {
             exit();
         }
 
+        // Affichage des messages de succès en fonction du paramètre 'status' dans l'URL.
+
         $status = isset($_GET['status']) ? $_GET['status'] : '';
         if ($status == 'registered') {
             $message_succes = "Compte créé avec succès !";
@@ -161,6 +184,10 @@ switch ($action) {
 
             if ($utilisateur) {
                 $_SESSION['user'] = $utilisateur;
+
+                // --- SÉCURISATION DE LA REDIRECTION ---
+                // On récupère l'URL de redirection si elle existe, sinon on va sur 'mon_compte.php'.
+
                 $url_redirection = isset($_GET['redirect']) ? $_GET['redirect'] : 'mon_compte.php';
 
                 $est_externe = false;
@@ -191,7 +218,7 @@ switch ($action) {
 require('partials/header.php');
 ?>
 <!-- =========================================================================
-     AFFICHAGE HTML (PARTIE "VUE") - Purifié et Fonctionnel
+     AFFICHAGE HTML
 ========================================================================= -->
 <main class="container my-4" style="max-width: 500px;">
     <div class="card shadow-sm">
@@ -218,6 +245,7 @@ require('partials/header.php');
             <?php if (count($erreurs) > 0) { ?>
                 <div class="alert alert-danger">
                     <?php
+                    // On purifie chaque message d'erreur avant de les joindre.
                     $erreurs_purifiees = array();
                     foreach ($erreurs as $erreur) {
                         $erreurs_purifiees[] = htmlspecialchars($erreur);
@@ -227,6 +255,7 @@ require('partials/header.php');
                 </div>
             <?php } ?>
 
+            <!-- Formulaire de connexion -->
             <?php if ($action == 'login' || ($action != 'register' && $action != 'forgot' && $action != 'reset')) { ?>
                 <h1 class="card-title text-center mb-4">Connexion</h1>
                 <form method="POST"
@@ -242,6 +271,8 @@ require('partials/header.php');
                 <div class="text-center mt-3"><a href="auth.php?action=forgot">Mot de passe oublié ?</a></div>
                 <hr>
                 <p class="text-center mb-0">Pas encore de compte ? <a href="auth.php?action=register">Inscrivez-vous</a></p>
+          
+            <!-- Formulaire d'inscription -->
 
             <?php } elseif ($action == 'register') { ?>
                 <h1 class="card-title text-center mb-4">Créer un compte</h1>
@@ -268,6 +299,8 @@ require('partials/header.php');
                 </form>
                 <hr>
                 <p class="text-center mb-0">Déjà un compte ? <a href="auth.php?action=login">Connectez-vous</a></p>
+            
+            <!-- Formulaire de demande de réinitialisation -->
 
             <?php } elseif ($action == 'forgot') { ?>
                 <h1 class="card-title text-center mb-4">Mot de passe oublié</h1>
@@ -281,10 +314,13 @@ require('partials/header.php');
                 <?php } ?>
                 <hr>
                 <p class="text-center mb-0"><a href="auth.php?action=login">Retour à la connexion</a></p>
+            
+            <!-- Formulaire de saisie du nouveau mot de passe -->
 
             <?php } elseif ($action == 'reset') { ?>
                 <h1 class="card-title text-center mb-4">Nouveau mot de passe</h1>
-                <?php if ($jeton_valide) { ?>
+                <?php if ($jeton_valide) { 
+                    // On n'affiche le formulaire que si le jeton est valide. ?>
                     <form method="POST" action="auth.php?action=reset&token=<?php echo htmlspecialchars($jeton); ?>">
                         <div class="mb-3"><label for="password" class="form-label">Nouveau mot de passe</label><input
                                 type="password" name="password" id="password" class="form-control" required></div>

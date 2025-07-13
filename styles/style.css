@@ -1,182 +1,703 @@
-/* ===================================================================
-   FEUILLE DE STYLES - L'Atelier des Mots & Lumières
-   =================================================================== */
+/* ==========================================================================
+   LES PAGES PARFUMÉES - FEUILLE DE STYLE PRINCIPALE
+   ==========================================================================
+   Ce fichier unifie le design du site. Il contient :
+   1. Les styles globaux (polices, couleurs, reset).
+   2. Les styles des composants réutilisables (header, footer, conteneurs).
+   3. La redéfinition des classes Bootstrap (cards, forms, buttons, alerts)
+      pour correspondre à l'identité visuelle du site.
+   4. Les styles spécifiques à chaque page (accueil, boutique, compte...).
+   ========================================================================== */
 
-/* ---------- 1. STYLES GLOBAUX ET TYPOGRAPHIE ---------- */
+/* --- 1. FONTS & VARIABLES GLOBALES --- */
+@import url('https://fonts.googleapis.com/css2?family=Bona+Nova:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:wght@400;600;700&display=swap');
+
+:root {
+    --font-title: 'Cormorant Garamond', serif;
+    --font-body: 'Bona Nova', serif;
+    --color-bg-light: #F8F5F0;     /* Crème très clair (utilisé pour les cartes) */
+    --color-bg-accent: #EFE5CE;    /* Beige accent (header, footer) */
+    --color-text: #4B360D;         /* Marron foncé pour le texte */
+    --color-text-light: #6c757d;   /* Gris doux pour textes secondaires */
+    --color-primary: #A38968;      /* Bouton principal, liens actifs */
+    --color-primary-text: #FFFFFF;
+    --color-success: #5a8a6f;      /* Vert harmonieux */
+    --color-danger: #c97c7c;       /* Rouge doux */
+    --color-warning: #d4a263;      /* Jaune/Orange doux */
+    --color-info: #e2d9c2;         /* Beige pour les alertes info */
+    --color-border: #dcd3bf;       /* Couleur des bordures */
+}
+
+/* --- 2. STYLES DE BASE & RESET --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background-color: #f8f9fa; /* Un gris très clair pour le fond */
-    color: #343a40; /* Un gris foncé pour le texte, plus doux que le noir pur */
+    margin: 0;
+    font-family: var(--font-body);
+    background-color: #FFFFFF;
+    color: var(--color-text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-title);
+    font-weight: 600;
+    color: #000;
+    margin-top: 0;
+}
+
+a {
+    text-decoration: none;
+    color: var(--color-primary);
+}
+a:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+p {
     line-height: 1.6;
 }
 
 .container {
-    max-width: 1200px; /* Largeur maximale pour les grands écrans */
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+.container-fluid {
+    width: 100%;
+    padding: 0;
 }
 
-h1, h2, h3, h4, h5 {
-    font-family: "Georgia", "Times New Roman", serif; /* Une police avec empattements pour les titres */
-    font-weight: bold;
+/* Utilitaires d'espacement de Bootstrap */
+.my-4 { margin-top: 1.5rem !important; margin-bottom: 1.5rem !important; }
+.my-5 { margin-top: 3rem !important; margin-bottom: 3rem !important; }
+.mb-3 { margin-bottom: 1rem !important; }
+.mb-4 { margin-bottom: 1.5rem !important; }
+.mt-3 { margin-top: 1rem !important; }
+.p-4 { padding: 1.5rem !important; }
+.p-5 { padding: 3rem !important; }
+.text-center { text-align: center !important; }
+.text-muted { color: var(--color-text-light) !important; }
+
+/* --- 3. COMPOSANTS GLOBAUX (HEADER, FOOTER) --- */
+
+/* Bannière supérieure */
+.top-banner {
+    background-color: var(--color-bg-accent);
+    text-align: center;
+    padding: 10px 0;
+    font-family: var(--font-title);
+    font-style: italic;
+    font-weight: 600;
+    font-size: 18px;
 }
 
-a {
-    color: #0056b3; /* Un bleu plus profond pour les liens */
-    transition: color 0.2s ease-in-out;
+/* Header principal */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
 }
-
-a:hover {
-    color: #003d80;
+.main-header .logo img {
+    width: 100px;
+}
+.main-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 40px;
+}
+.main-nav a {
+    font-family: var(--font-title);
+    font-size: 24px;
+    font-weight: 600;
+    padding-bottom: 5px;
+    color: var(--color-text);
+}
+.main-nav a.active, .main-nav a:hover {
+    border-bottom: 2px solid var(--color-primary);
     text-decoration: none;
 }
-
-
-/* ---------- 2. STYLES POUR LES CARTES (CARDS) ---------- */
-/* Utilisé sur mon_compte, a_propos, formulaires, etc. */
-.card {
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    background-color: #ffffff;
-    margin-bottom: 2rem;
+.header-icons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.header-icons img {
+    width: 28px;
+    height: 28px;
 }
 
-.card-header {
-    background-color: #f8f9fa;
-    font-weight: bold;
-    border-bottom: 1px solid #e9ecef;
+/* Footer principal */
+.main-footer {
+    background-color: var(--color-bg-accent);
+    padding: 60px 40px;
+    color: #000;
+    font-size: 16px;
+}
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+.footer-column h4 {
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.footer-column li {
+    margin-bottom: 10px;
+}
+.footer-column a {
+    color: var(--color-text);
 }
 
 
-/* ---------- 3. STYLES POUR LES FORMULAIRES ---------- */
-.form-control {
-    border-radius: 5px;
-    border: 1px solid #ced4da;
-    padding: 10px 15px;
-}
+/* --- 4. RÉINTERPRÉTATION DES CLASSES BOOTSTRAP --- */
 
-.form-control:focus {
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
+/* Boutons */
 .btn {
-    border-radius: 5px;
+    display: inline-block;
+    font-family: var(--font-body);
     font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+}
+.btn:hover {
+    text-decoration: none;
+    opacity: 0.9;
+}
+.btn-primary {
+    color: var(--color-primary-text);
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+.btn-secondary {
+    color: var(--color-text);
+    background-color: transparent;
+    border-color: var(--color-text);
+}
+.btn-success {
+    color: #fff;
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+}
+.btn-danger {
+    color: #fff;
+    background-color: var(--color-danger);
+    border-color: var(--color-danger);
+}
+.btn-warning {
+    color: #fff;
+    background-color: var(--color-warning);
+    border-color: var(--color-warning);
+}
+.btn-info {
+    color: var(--color-text);
+    background-color: var(--color-info);
+    border-color: var(--color-info);
+}
+.w-100 {
+    width: 100% !important;
+}
+
+/* Formulaires */
+.form-label {
+    margin-bottom: 0.5rem;
+    display: inline-block;
+    font-weight: bold;
+}
+.form-control, .form-select {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    line-height: 1.5;
+    color: var(--color-text);
+    background-color: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--color-primary);
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(163, 137, 104, 0.25);
+}
+textarea.form-control {
+    min-height: 120px;
+}
+
+/* Newsletter Form (Footer) */
+.newsletter-form {
+    display: flex;
+    margin-top: 15px;
+}
+.newsletter-form input {
+    flex-grow: 1;
+    border: 1px solid var(--color-text);
+    background: white;
+    font-size: 1rem;
+    padding: 10px;
+    border-right: none;
+}
+.newsletter-form button {
     padding: 10px 20px;
-    transition: all 0.2s;
+    border: 1px solid var(--color-text);
+    background: var(--color-text);
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
 }
 
-.btn-primary { background-color: #007bff; border-color: #007bff; }
-.btn-primary:hover { background-color: #0069d9; border-color: #0062cc; }
-.btn-success { background-color: #28a745; border-color: #28a745; }
-.btn-danger { background-color: #dc3545; border-color: #dc3545; }
-.btn-warning { background-color: #ffc107; border-color: #ffc107; color: #212529; }
-.btn-secondary { background-color: #6c757d; border-color: #6c757d; }
-.btn-block { display: block; width: 100%; }
-
-
-/* ---------- 4. STYLES SPÉCIFIQUES AU CATALOGUE ---------- */
-.product-card {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+/* Cartes (Card) */
+.card {
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background-color: var(--color-bg-light);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
-
-.product-card img {
-    height: 300px;
-    object-fit: cover;
+.card-body {
+    padding: 1.5rem;
 }
-
-.product-card .card-body {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1; /* Permet au corps de la carte de s'étirer */
+.card-header {
+    padding: 1rem 1.5rem;
+    background-color: #e2d9c2;
+    border-bottom: 1px solid var(--color-border);
 }
-
-.product-card .card-title {
-    font-size: 1.1rem;
-    min-height: 48px; /* Assure que les titres sur deux lignes ne décalent pas le reste */
-}
-
-.product-card-footer {
-    margin-top: auto; /* Pousse le footer en bas */
-    padding-top: 1rem;
-    border-top: 1px solid #f0f0f0;
-}
-
-
-/* ---------- 5. STYLES SPÉCIFIQUES À LA PAGE PRODUIT ---------- */
-.product-image-col img {
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.price {
-    font-size: 2.2rem;
-    font-weight: bold;
-    color: #dc3545;
+.card-title {
     margin-bottom: 1rem;
 }
 
-.details-list {
-    list-style: none;
-    padding: 0;
+/* Alertes */
+.alert {
+    position: relative;
+    padding: 1rem 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+.alert-success {
+    color: var(--color-text); background-color: #d1e7dd; border-color: #badbcc;
+}
+.alert-danger {
+    color: var(--color-text); background-color: #f8d7da; border-color: #f5c2c7;
+}
+.alert-warning {
+    color: var(--color-text); background-color: #fff3cd; border-color: #ffecb5;
+}
+.alert-info {
+    color: var(--color-text); background-color: var(--color-info); border-color: #d9d1c0;
 }
 
-.details-list li {
-    padding: 8px 0;
-    border-bottom: 1px solid #f0f0f0;
-    display: flex;
+/* Tables */
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    vertical-align: top;
+    border-color: var(--color-border);
 }
-
-.details-list li strong {
-    flex-basis: 180px; /* Largeur fixe pour les libellés */
-    flex-shrink: 0;
-    color: #555;
-}
-
-/* ===================================================
-   Système de Notation par Étoiles - VERSION CORRIGÉE
-   =================================================== */
-
-.rating-stars {
-    display: inline-block; /* Pour que le div ne prenne que la largeur des étoiles */
-    position: relative;    /* Contexte pour le positionnement absolu de l'enfant */
-    font-size: 1rem;       /* Taille par défaut, peut être changée */
-    line-height: 1;        /* Évite des hauteurs de ligne bizarres */
-    color: #e9ecef;       /* Couleur des étoiles de FOND (grises) */
-}
-
-.rating-stars .stars-foreground {
-    position: absolute;    /* Se superpose au parent */
-    top: 0;
-    left: 0;
-    white-space: nowrap;   /* Empêche les étoiles de passer à la ligne */
-    overflow: hidden;      /* C'est la magie : cache tout ce qui dépasse de la largeur définie */
-    color: #ffc107;       /* Couleur des étoiles de DEVANT (jaunes) */
-}
-/* ---------- 7. STYLES UTILITAIRES (TABLEAUX, BADGES, PAGINATION) ---------- */
 .table th, .table td {
-    vertical-align: middle;
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+}
+.table thead th {
+    vertical-align: bottom;
+    border-bottom-width: 2px;
+}
+.table-responsive {
+    overflow-x: auto;
 }
 
+/* Badges */
 .badge {
-    padding: 0.4em 0.6em;
-    font-size: 0.8em;
+    display: inline-block;
+    padding: 0.35em 0.65em;
+    font-size: .75em;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
 }
-.badge-success { background-color: #28a745; } /* Remplace les anciens badges Bootstrap */
-.badge-info { background-color: #17a2b8; }
+.bg-success { background-color: var(--color-success) !important; }
+.bg-warning { background-color: var(--color-warning) !important; }
+.bg-danger  { background-color: var(--color-danger) !important; }
 
-.pagination {
+/* Grille (Row/Col) */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+.col-md-5, .col-md-6, .col-md-7, .col-lg-3, .col-lg-4, .col-lg-6, .col-lg-8, .col-lg-9 {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+/* --- 5. STYLES SPÉCIFIQUES AUX PAGES --- */
+
+/* Accueil (index.php) */
+.hero {
+    position: relative;
+    text-align: left;
+    color: #000;
+}
+.hero img.hero-background {
+    width: 100%;
+    height: 600px;
+    object-fit: cover;
+    display: block;
+}
+.hero .hero-content {
+    position: absolute;
+    top: 50%;
+    left: 80px;
+    transform: translateY(-50%);
+    max-width: 600px;
+}
+.hero h1 {
+    font-size: 50px;
+    margin: 0;
+}
+.hero p {
+    font-size: 28px;
+    margin: 20px 0 40px;
+}
+.hero .btn {
+    padding: 15px 40px;
+    font-size: 20px;
+}
+.story-section {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    padding: 80px;
+    justify-content: center;
+}
+.story-content h2 { font-size: 45px; }
+.story-content p { font-size: 28px; line-height: 1.6; margin-bottom: 40px; }
+.story-image img { width: 400px; height: auto; object-fit: cover; }
+.category-grid {
     display: flex;
     justify-content: center;
-    list-style: none;
-    padding: 0;
+    gap: 40px;
+    padding: 50px 80px;
+    text-align: center;
 }
-.page-item { margin: 0 5px; }
-.page-link { display: block; padding: 8px 16px; text-decoration: none; color: #007bff; border: 1px solid #dee2e6; border-radius: 4px; }
-.page-item.active .page-link { background-color: #007bff; color: white; border-color: #007bff; }
+.category-card img {
+    width: 100%;
+    max-width: 330px;
+    height: 450px;
+    object-fit: cover;
+    margin-bottom: 20px;
+}
+.category-card a {
+    font-family: var(--font-title);
+    font-weight: 700;
+    font-size: 30px;
+}
+.section-title {
+    text-align: center;
+    font-size: 45px;
+    margin: 80px 0 50px;
+}
+.testimonials {
+    padding: 100px 40px;
+    background-color: var(--color-bg-light);
+}
+.testimonial-grid {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+}
+.testimonial-card {
+    background-color: white;
+    padding: 80px 30px 30px;
+    text-align: center;
+    max-width: 380px;
+    position: relative;
+    border: 1px solid var(--color-border);
+}
+.testimonial-card .avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid var(--color-bg-light);
+}
+.testimonial-card h3 { font-size: 24px; font-family: var(--font-body); font-weight: 700; }
+.testimonial-card blockquote p { font-size: 20px; line-height: 1.5; font-style: italic; }
+.testimonial-card cite { display: block; text-align: right; font-size: 20px; margin-top: 20px; font-style: normal; }
+
+
+/* Boutique & Fiche Produit (shop.php) */
+.rating-stars {
+    display: inline-block;
+    position: relative;
+    font-size: 1.2rem;
+    line-height: 1;
+    color: #e9ecef;
+}
+.rating-stars-large { font-size: 1.8rem; }
+.stars-background { position: relative; z-index: 1; }
+.stars-foreground {
+    position: absolute;
+    top: 0; left: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    color: #ffc107;
+    z-index: 2;
+}
+.product-detail-image-container img {
+    width: 100%;
+    max-height: 550px;
+    height: auto;
+    object-fit: contain;
+}
+/* NOUVEAU CODE CORRIGÉ */
+.product-tags-container {
+    text-align: center;
+}
+
+/* NOUVEAU CODE CORRIGÉ ET DÉFINITIF */
+/* Ces styles ne s'appliquent QUE si le conteneur a du contenu (les étiquettes) */
+.product-tags-container:not(:empty) {
+    /* On retire la hauteur minimale qui créait l'espace vide. */
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+.product-tag-line {
+    display: inline-block;
+    background-color: var(--color-bg-accent);
+    color: var(--color-text);
+    font-size: 0.8em;
+    padding: 0.3em 0.8em;
+    border-radius: 10px;
+    margin: 3px 2px;
+    max-width: 90%;
+}
+.nav-pills .nav-link {
+    color: var(--color-text);
+}
+.nav-pills .nav-link.active {
+    background-color: var(--color-primary);
+    color: var(--color-primary-text);
+}
+
+
+/* --- 6. RESPONSIVE --- */
+@media (min-width: 768px) { /* Medium devices (tablets, 768px and up) */
+    .col-md-5 { flex: 0 0 41.666667%; max-width: 41.666667%; }
+    .col-md-6 { flex: 0 0 50%; max-width: 50%; }
+    .col-md-7 { flex: 0 0 58.333333%; max-width: 58.333333%; }
+}
+@media (min-width: 992px) { /* Large devices (desktops, 992px and up) */
+    .col-lg-3 { flex: 0 0 25%; max-width: 25%; }
+    .col-lg-4 { flex: 0 0 33.333333%; max-width: 33.333333%; }
+    .col-lg-6 { flex: 0 0 50%; max-width: 50%; }
+    .col-lg-8 { flex: 0 0 66.666667%; max-width: 66.666667%; }
+    .col-lg-9 { flex: 0 0 75%; max-width: 75%; }
+}
+
+@media (max-width: 991px) {
+    .main-header { flex-direction: column; gap: 20px; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .story-section { flex-direction: column; padding: 40px 20px; }
+    .testimonial-grid { flex-direction: column; align-items: center; }
+}
+
+@media (max-width: 767px) {
+    .hero .hero-content {
+        position: static;
+        transform: none;
+        padding: 40px 20px;
+        text-align: center;
+        max-width: 100%;
+    }
+    .hero h1 { font-size: 36px; }
+    .hero p { font-size: 20px; }
+    .main-nav ul {
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .main-nav a { font-size: 20px; }
+    .category-grid { flex-direction: column; align-items: center; }
+}
+
+/* ==========================================================================
+   CSS ADDITIONNEL POUR LE HEADER UNIFIÉ
+   ========================================================================== */
+
+/* Ajustements pour les icônes du header */
+.header-icons img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+}
+
+.header-icons a:hover img {
+    transform: scale(1.1);
+}
+
+/* Conteneur pour l'icône du panier pour positionner le badge */
+.cart-icon-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* Style du badge (compteur) sur l'icône du panier */
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    
+    background-color: var(--color-danger);
+    color: white;
+    
+    font-size: 12px;
+    font-weight: bold;
+    font-family: var(--font-sans, sans-serif); /* Police sans-serif pour la lisibilité */
+    
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px white; /* Petit contour blanc */
+}
+
+
+/* ==========================================================================
+   STYLES POUR LA PAGE DE CONTACT
+   ========================================================================== */
+
+.contact-container {
+    max-width: 650px;
+    margin: 4rem auto; /* Centre le conteneur et ajoute de l'espace en haut/bas */
+    padding: 2rem 3rem;
+    background-color: var(--color-bg-light); /* Fond crème comme les cartes */
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+}
+
+.contact-container h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Style pour le formulaire lui-même */
+.contact-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.contact-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-family: var(--font-title);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.contact-form input[type="text"],
+.contact-form input[type="email"],
+.contact-form textarea {
+    /* On réutilise les styles de .form-control pour la cohérence */
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    line-height: 1.5;
+    color: var(--color-text);
+    background-color: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    border-color: var(--color-primary);
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(163, 137, 104, 0.25);
+}
+
+.contact-form .btn {
+    width: 100%;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+/* Message de salutation pour l'utilisateur connecté */
+.contact-greeting {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: var(--color-info);
+    border-radius: 4px;
+    font-style: italic;
+}
+
+/* Bloc d'erreurs */
+.contact-errors {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
+    border-radius: 4px;
+}
+.contact-errors ul {
+    margin-bottom: 0;
+    padding-left: 20px;
+}
+
+/* Message de succès après envoi */
+.contact-success {
+    text-align: center;
+    padding: 2rem 0;
+}
+.contact-success h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+.contact-success .btn {
+    margin-top: 1.5rem;
+}

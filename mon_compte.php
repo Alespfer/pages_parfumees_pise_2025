@@ -1,9 +1,18 @@
 <?php
 /*
  * Fichier : mon_compte.php
- * Rôle : Contrôleur de l'espace personnel du client.
- * Version purifiée respectant la doctrine du cours et maintenant toutes les fonctionnalités.
+ * Rôle : Contrôleur et Vue de l'espace personnel du client.
+ * Ce fichier est un "mini-site" à lui tout seul. Il gère toutes les facettes
+ * du compte d'un utilisateur connecté :
+ *  - Affichage des informations, adresses, commandes, retours.
+ *  - Modification des informations personnelles et du mot de passe.
+ *  - Ajout, modification, suppression des adresses.
+ *  - Consultation des détails d'une commande ou d'un retour.
+ *  - Lancement d'une demande de retour pour une commande livrée.
  */
+
+
+// Démarrage de la session pour accéder aux informations de l'utilisateur connecté.
 
 session_start();
 require('parametrage/param.php');
@@ -11,16 +20,22 @@ require('fonction/fonctions.php');
 
 
 // --- GARDE-FOU D'ACCÈS ---
+
+// Si la variable de session 'user' n'existe pas, cela signifie que personne n'est connecté. L'accès à cette page est donc interdit, et on redirige vers la page de connexion.
 if (!isset($_SESSION['user']) || !isset($_SESSION['user']['id_client'])) {
     header('Location: auth.php?action=login');
     exit();
 }
 
+
+// --- INITIALISATION DU CONTRÔLEUR ---
+
 $id_client = $_SESSION['user']['id_client'];
 $action = isset($_GET['action']) ? $_GET['action'] : 'list';
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
-// --- GESTION DES MESSAGES FLASH ---
+// --- GESTION DES MESSAGES FLASH (pour le retour utilisateur) ---
+
 if (isset($_SESSION['flash_success'])) {
     $message_flash_succes = $_SESSION['flash_success'];
 } else {
@@ -42,6 +57,7 @@ if (isset($_POST['form_type'])) {
 
     switch ($type_formulaire) {
         case 'user_info':
+            // Traitement du formulaire de mise à jour des informations personnelles.
             $nom = purifier_trim(isset($_POST['nom']) ? $_POST['nom'] : '');
             $prenom = purifier_trim(isset($_POST['prenom']) ? $_POST['prenom'] : '');
             if ($nom != '' && $prenom != '') {
@@ -59,6 +75,7 @@ if (isset($_POST['form_type'])) {
             exit();
 
         case 'password':
+            // Traitement du formulaire de changement de mot de passe.
             $ancien_mdp = isset($_POST['old_password']) ? $_POST['old_password'] : '';
             $nouveau_mdp = isset($_POST['new_password']) ? $_POST['new_password'] : '';
             $nouveau_mdp_confirm = isset($_POST['new_password_confirm']) ? $_POST['new_password_confirm'] : '';
@@ -93,6 +110,7 @@ if (isset($_POST['form_type'])) {
             exit();
 
         case 'address':
+            // Traitement du formulaire d'ajout ou de modification d'adresse.
             $donnees = array(
                 'rue' => purifier_trim(isset($_POST['rue']) ? $_POST['rue'] : ''),
                 'code_postal' => purifier_trim(isset($_POST['code_postal']) ? $_POST['code_postal'] : ''),
@@ -120,6 +138,7 @@ if (isset($_POST['form_type'])) {
             exit();
 
         case 'return_request':
+            // Traitement du formulaire de demande de retour.
             $id_commande = isset($_POST['id_commande']) ? (int) $_POST['id_commande'] : 0;
             $commande = getOrderDetailsForUser($id_commande, $id_client);
             if ($commande) {
@@ -140,7 +159,9 @@ if (isset($_POST['form_type'])) {
 }
 
 
-// --- GESTION DES ACTIONS (GET) ---
+// --- TRAITEMENT DES ACTIONS (logique GET) ---
+// Principalement pour les actions de suppression qui utilisent un simple lien.
+
 if ($action == 'delete_address' && $id > 0) {
     if (deleteAddress($id, $id_client)) {
         $_SESSION['flash_success'] = "Adresse supprimée avec succès.";
@@ -164,6 +185,7 @@ switch ($action) {
     case 'edit':
         $pageTitle = "Modifier une Adresse";
         $adresse = getAddressById($id, $id_client);
+        // Si l'adresse n'existe pas ou n'appartient pas au client, on le redirige.
         if (!$adresse) {
             header('Location: mon_compte.php');
             exit();
@@ -176,6 +198,7 @@ switch ($action) {
             header('Location: mon_compte.php');
             exit();
         }
+        $retour_deja_demande = checkIfReturnExistsForOrder($id);
         break;
     case 'details_retour':
         $pageTitle = "Détails de la Demande de Retour";
@@ -207,7 +230,7 @@ switch ($action) {
 require('partials/header.php');
 ?>
 <!-- =========================================================================
-     AFFICHAGE HTML (PARTIE "VUE")
+     AFFICHAGE HTML 
 ========================================================================= -->
 <main class="container my-4">
     <h1><?php echo htmlspecialchars($pageTitle); ?></h1>
@@ -220,10 +243,10 @@ require('partials/header.php');
     <?php } ?>
 
     <?php switch ($action) {
+        // Vue principale du compte avec tous les panneaux.
 
         case 'list':
         default: ?>
-            <!-- VUE PRINCIPALE DU COMPTE -->
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3>Mes informations personnelles</h3>
@@ -359,10 +382,17 @@ require('partials/header.php');
                     <?php } ?>
                 </div>
             </div>
+            <br/>
+            <div class="d-flex justify-content-end mb-3">
+                <form action="auth.php?action=logout" method="POST">
+                    <button type="submit" class="btn btn-danger">Se déconnecter</button>
+                </form>
+            </div>
+
             <?php break;
 
-        case 'edit_account': ?>
-            <!-- VUE MODIFICATION DU COMPTE -->
+        case 'edit_account': 
+            // Vue de modification des infos personnelles et du mot de passe.?>
             <div class="row">
                 <div class="col-lg-6 mb-4">
                     <div class="card p-4 h-100">
@@ -405,7 +435,7 @@ require('partials/header.php');
 
         case 'add':
         case 'edit': ?>
-            <!-- VUE AJOUT/MODIFICATION ADRESSE -->
+            <!-- Vue ajout/modification adresse -->
             <div class="card p-4 mt-3">
                 <form method="POST" action="mon_compte.php">
                     <input type="hidden" name="form_type" value="address">
@@ -439,7 +469,7 @@ require('partials/header.php');
             <?php break;
 
         case 'details_commande': ?>
-            <!-- VUE DÉTAILS D'UNE COMMANDE -->
+            <!-- Vue détails d'une commande -->
             <div class="card mt-3">
                 <div class="card-body">
                     <p><strong>Date :</strong> <?php echo htmlspecialchars($details_commande['date_commande']); ?></p>
@@ -458,15 +488,35 @@ require('partials/header.php');
                     </ul>
                 </div>
                 <div class="card-footer text-end">
-                    <a href="mon_compte.php?action=demande_retour&id=<?php echo $details_commande['id_commande']; ?>"
-                        class="btn btn-warning">Faire une demande de retour</a>
+                    <?php
+                    // La logique d'affichage du bouton de retour.
+                    // Pour que le bouton soit actif, il faut DEUX conditions :
+                    // 1. La commande doit être au statut "Livrée".
+                    // 2. Il ne doit pas y avoir de demande de retour déjà en cours pour cette commande.                    
+                    $condition_retour_possible = (isset($details_commande['statut_libelle']) && $details_commande['statut_libelle'] == 'Livrée');
+                    if ($condition_retour_possible == true && $retour_deja_demande == false) {
+                        ?>
+                        <a href="mon_compte.php?action=demande_retour&id=<?php echo $details_commande['id_commande']; ?>"
+                            class="btn btn-warning">Faire une demande de retour</a>
+                        <?php
+                    } else {
+                        // Si l'une des conditions n'est pas remplie, le bouton est désactivé.
+                        $message_inactif = 'Retour non disponible';
+                        if ($retour_deja_demande == true) {
+                            $message_inactif = 'Demande de retour déjà effectuée';
+                        }
+                        ?>
+                        <button class="btn btn-secondary" disabled><?php echo $message_inactif; ?></button>
+                        <?php
+                    }
+                    ?>
                 </div>
             </div>
             <a href="mon_compte.php" class="btn btn-secondary mt-3">Retour à l'historique</a>
             <?php break;
 
         case 'demande_retour': ?>
-            <!-- VUE FORMULAIRE DE RETOUR -->
+            <!-- Vue formulaire de retour -->
             <form method="POST" action="mon_compte.php">
                 <input type="hidden" name="form_type" value="return_request">
                 <input type="hidden" name="id_commande" value="<?php echo $commande_a_retourner['id_commande']; ?>">
@@ -519,7 +569,7 @@ require('partials/header.php');
             <?php break;
 
         case 'details_retour': ?>
-            <!-- VUE DÉTAILS D'UN RETOUR -->
+            <!-- Vue détails d'un retour -->
             <div class="card mt-3">
                 <div class="card-header">
                     <h4>Détails de la Demande #<?php echo $details_retour['id_demande']; ?></h4>

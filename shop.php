@@ -1,17 +1,22 @@
 <?php
 /*
  * Fichier : shop.php
- * Rôle : Contrôleur et Vue monolithique de la boutique.
- * Gère l'affichage de la vitrine, du catalogue et des fiches produits.
- * Version entièrement purifiée, sans inclusion de fichiers partiels de vue.
+ * Rôle : Contrôleur et Vue principal de la boutique.
+ * Ce fichier est un contrôleur frontal qui gère trois affichages distincts :
+ *  1. La 'vitrine' : la page d'accueil de la boutique.
+ *  2. La 'list' : la vue catalogue, avec ses filtres et sa pagination.
+ *  3. La 'view' : la fiche détaillée d'un produit unique.
+ * L'action à afficher est déterminée par les paramètres dans l'URL.
  */
 
-// --- INITIALISATION ORTHODOXE ---
+
+// --- INITIALISATION  ---
 session_start();
 require('parametrage/param.php');
 require('fonction/fonctions.php');
 
 // --- AIGUILLAGE PRINCIPAL ---
+// On détermine l'action à effectuer en fonction des paramètres GET 
 if (isset($_GET['a'])) {
     $action = $_GET['a'];
 } else {
@@ -23,7 +28,7 @@ if (isset($_GET['a'])) {
 }
 
 // --- INITIALISATION DES VARIABLES DE VUE ---
-$pageTitle = SITE_NAME;
+$pageTitle = SITE_NAME; 
 $produit = array();
 $avis = array();
 $livre_inclus = false;
@@ -38,12 +43,20 @@ $bougies_showcase = array();
 $coffrets_showcase = array();
 $priceBounds = getMinMaxPrices();
 
+// --- JETON D'IDEMPOTENCE (Protection contre l'ajout multiple au panier) ---
+$user_identifier = isset($_SESSION['user']['id_client']) ? $_SESSION['user']['id_client'] : 'visiteur_anonyme';
+$_SESSION['add_to_cart_token'] = custom_hash(time() . $user_identifier);
+
+
 // =========================================================================
 // SECTION DE TRAITEMENT DE LA LOGIQUE (LE CONTRÔLEUR)
 // =========================================================================
 
+
+// --- LOGIQUE POUR LA FICHE PRODUIT ('view') ---
+
 if ($action == 'view') {
-    // --- LOGIQUE POUR LA FICHE PRODUIT ---
+    // Traitement du formulaire d'ajout d'avis.
     if (isset($_POST['form_type']) && $_POST['form_type'] == 'rating') {
         if (isset($_SESSION['user']['id_client'])) {
             $id_produit_form = isset($_POST['id_produit']) ? (int) $_POST['id_produit'] : 0;
@@ -56,6 +69,9 @@ if ($action == 'view') {
             exit();
         }
     }
+
+
+    // Préparation des données pour l'affichage de la fiche produit.
 
     $product_id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
     if ($product_id <= 0) {
@@ -79,13 +95,16 @@ if ($action == 'view') {
     $pageTitle = isset($produit['nom_produit']) ? htmlspecialchars($produit['nom_produit']) : 'Détail Produit';
 
 } elseif ($action == 'list') {
-    // --- LOGIQUE POUR LE CATALOGUE FILTRÉ ---
+// --- LOGIQUE POUR LE CATALOGUE (vue filtrée) ---
     $view_type = isset($_GET['view']) ? $_GET['view'] : 'livres';
     $allowed_views = array('livres', 'bougies', 'coffrets');
     if (!in_array($view_type, $allowed_views)) {
         header('Location: shop.php');
         exit();
     }
+
+
+    // On prépare le tableau des filtres en récupérant les données de l'URL.
 
     $type_filter = purifier_rtrim($view_type, 's');
     $filters = array(
@@ -100,6 +119,8 @@ if ($action == 'view') {
         'parfums' => isset($_GET['parfums']) && is_array($_GET['parfums']) ? $_GET['parfums'] : array(),
         'ambiances' => isset($_GET['ambiances']) && is_array($_GET['ambiances']) ? $_GET['ambiances'] : array(),
     );
+
+    // On exécute les requêtes pour récupérer les produits et la pagination.
 
     $produits = getFilteredProducts($filters);
     $totalProduits = countFilteredProducts($filters);
@@ -120,8 +141,8 @@ if ($action == 'view') {
             break;
     }
 
-} else { // 'vitrine' ou action par défaut
-    // --- LOGIQUE POUR LA VITRINE ---
+} else { 
+    // --- LOGIQUE POUR LA VITRINE (action par défaut) ---
     $action = 'vitrine';
     $pageTitle = "L'Atelier des Mots & Lumières";
     $livres_showcase = getFilteredProducts(array('type' => 'livre', 'limit' => 4, 'sort' => 'nouveaute'));
@@ -129,7 +150,11 @@ if ($action == 'view') {
     $coffrets_showcase = getFilteredProducts(array('type' => 'coffret', 'limit' => 4, 'sort' => 'nouveaute'));
 }
 
-// --- AFFICHAGE (LA VUE) ---
+
+
+// =========================================================================
+// SECTION D'AFFICHAGE (LA VUE)
+// =========================================================================
 require('partials/header.php');
 ?>
 <style>
@@ -165,10 +190,41 @@ require('partials/header.php');
         max-height: 550px;
         height: auto;
         object-fit: contain;
+
+        .product-tags-container {
+            min-height: 52px;
+            /* Espace pour deux lignes de badges */
+            text-align: center;
+            margin-top: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Le style du "rectangle" / badge */
+        .product-tag-line {
+            display: inline-block;
+            /* <-- LA CLÉ : Permet au div d'avoir un fond et des dimensions */
+            background-color: #EFEBDF;
+            /* Fond beige de la maquette */
+            color: #343a40;
+            font-family: 'Abhaya Libre', serif;
+            font-size: 0.8em;
+            padding: 0.3em 0.8em;
+            /* Espace intérieur */
+            border-radius: 10px;
+            /* Bords arrondis */
+            margin: 3px 2px;
+            /* Espace entre les badges s'ils sont côte à côte ou l'un sur l'autre */
+            max-width: 90%;
+            /* Empêche le badge d'être trop large sur mobile */
+        }
+
+        /* --- FIN DE L'INSERTION --- */
     }
 </style>
 <?php
+// On affiche la bonne section HTML en fonction de l'action déterminée par le contrôleur.
 if ($action == 'view') {
+    // Vue de la Fiche Produit.
     ?>
     <main class="container my-4">
         <p><a href="shop.php?a=list&view=<?php echo htmlspecialchars($produit['type']); ?>s">← Retour au catalogue</a></p>
@@ -176,13 +232,16 @@ if ($action == 'view') {
         <div class="row">
             <div class="col-md-5 mb-4 product-detail-image-container">
                 <?php if (isset($produit['image_url']) && $produit['image_url'] != '') { ?>
-                    <img src="<?php echo htmlspecialchars($produit['image_url']); ?>"
-                        alt="<?php echo htmlspecialchars($produit['nom_produit']); ?>" class="img-fluid rounded shadow-sm">
+                    <img src="<?php echo htmlspecialchars(isset($produit['image_url']) ? $produit['image_url'] : ''); ?>"
+                        alt="<?php echo htmlspecialchars(isset($produit['nom_produit']) ? $produit['nom_produit'] : ''); ?>"
+                        class="img-fluid rounded shadow-sm">
                 <?php } else { ?>
                     <img src="https://via.placeholder.com/400x500.png?text=Image+non+disponible"
-                        alt="<?php echo htmlspecialchars($produit['nom_produit']); ?>" class="img-fluid rounded shadow-sm">
+                        alt="<?php echo htmlspecialchars(isset($produit['nom_produit']) ? $produit['nom_produit'] : ''); ?>"
+                        class="img-fluid rounded shadow-sm">
                 <?php } ?>
             </div>
+
             <div class="col-md-7">
                 <h1><?php echo htmlspecialchars($produit['nom_produit']); ?></h1>
                 <?php if ($produit['type'] == 'livre' && isset($produit['auteurs']) && $produit['auteurs'] != '') { ?>
@@ -202,7 +261,8 @@ if ($action == 'view') {
                 <?php if ($produit['stock'] > 0) { ?>
                     <div class="alert alert-success">En stock (<?php echo htmlspecialchars($produit['stock']); ?> restant(s))
                     </div>
-                    <form action="panier2.php" method="POST" class="mb-4 d-flex align-items-center">
+                    <form action="panier.php" method="POST" class="mb-4 d-flex align-items-center">                        <input type="hidden" name="add_to_cart_token" value="<?php echo $_SESSION['add_to_cart_token']; ?>">
+
                         <input type="hidden" name="action" value="add">
                         <input type="hidden" name="product_id" value="<?php echo $produit['id_produit']; ?>">
                         <label for="quantity" class="me-2">Quantité:</label>
@@ -316,6 +376,8 @@ if ($action == 'view') {
     </main>
     <?php
 } elseif ($action == 'list') {
+    // Vue du Catalogue.
+
     ?>
     <main class="container my-5">
         <div class="text-center p-4 mb-5" style="background-color: #f8f9fa; border-radius: .25rem;">
@@ -399,62 +461,38 @@ if ($action == 'view') {
             </div>
             <div class="col-lg-9">
 
-                <!-- ======================================================= -->
-                <!--  BLOC DE CONTRÔLE D'AFFICHAGE (PURIFIÉ)                 -->
-                <!-- ======================================================= -->
                 <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
                     <span class="text-muted"><strong><?php echo $totalProduits; ?></strong> produit(s)</span>
-
-                    <!-- Un seul formulaire pour les contrôles de tri et de limite -->
                     <form method="GET" action="shop.php" class="d-flex align-items-center">
-                        <?php
-                        // La fonction build_hidden_fields_except est appelée une seule fois
-                        // pour préserver tous les filtres actifs (ex: genre, état, prix, etc.)
-                        // lors de la soumission de ce formulaire.
-                        build_hidden_fields_except(array('sort', 'limit'));
-                        ?>
-
-                        <!-- Contrôle pour le nombre d'articles par page -->
+                        <?php build_hidden_fields_except(array('sort', 'limit')); ?>
                         <label for="limit" class="form-label me-2 mb-0 text-nowrap">Afficher:</label>
                         <select name="limit" id="limit" class="form-select form-select-sm me-3"
                             onchange="this.form.submit()">
-                            <option value="12" <?php if ($filters['limit'] == 12) {
-                                echo 'selected';
-                            } ?>>12</option>
-                            <option value="24" <?php if ($filters['limit'] == 24) {
-                                echo 'selected';
-                            } ?>>24</option>
-                            <option value="36" <?php if ($filters['limit'] == 36) {
-                                echo 'selected';
-                            } ?>>36</option>
+                            <option value="12" <?php if ($filters['limit'] == 12)
+                                echo 'selected'; ?>>12</option>
+                            <option value="24" <?php if ($filters['limit'] == 24)
+                                echo 'selected'; ?>>24</option>
+                            <option value="36" <?php if ($filters['limit'] == 36)
+                                echo 'selected'; ?>>36</option>
                         </select>
-
-                        <!-- Contrôle pour le tri des articles -->
                         <label for="sort" class="form-label me-2 mb-0 text-nowrap">Trier par:</label>
                         <select name="sort" id="sort" class="form-select form-select-sm" onchange="this.form.submit()">
-                            <option value="nouveaute" <?php if ($filters['sort'] == 'nouveaute') {
-                                echo 'selected';
-                            } ?>>
+                            <option value="nouveaute" <?php if ($filters['sort'] == 'nouveaute')
+                                echo 'selected'; ?>>
                                 Nouveautés</option>
-                            <option value="prix_asc" <?php if ($filters['sort'] == 'prix_asc') {
-                                echo 'selected';
-                            } ?>>Prix
+                            <option value="prix_asc" <?php if ($filters['sort'] == 'prix_asc')
+                                echo 'selected'; ?>>Prix
                                 croissant</option>
-                            <option value="prix_desc" <?php if ($filters['sort'] == 'prix_desc') {
-                                echo 'selected';
-                            } ?>>Prix
+                            <option value="prix_desc" <?php if ($filters['sort'] == 'prix_desc')
+                                echo 'selected'; ?>>Prix
                                 décroissant</option>
-                            <option value="note_desc" <?php if ($filters['sort'] == 'note_desc') {
-                                echo 'selected';
-                            } ?>>Mieux
+                            <option value="note_desc" <?php if ($filters['sort'] == 'note_desc')
+                                echo 'selected'; ?>>Mieux
                                 notés</option>
                         </select>
                     </form>
                 </div>
 
-                <!-- ======================================================= -->
-                <!--  GRILLE D'AFFICHAGE DES PRODUITS                        -->
-                <!-- ======================================================= -->
                 <div class="row">
                     <?php if (count($produits) > 0) {
                         foreach ($produits as $produit) { ?>
@@ -477,6 +515,45 @@ if ($action == 'view') {
                                                 href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>"
                                                 class="text-decoration-none text-dark"><?php echo htmlspecialchars($produit['nom_produit']); ?></a>
                                         </h5>
+
+                                        <!-- BLOC DES ÉTIQUETTES  -->
+                                        <div class="product-tags-container">
+                                            <?php
+                                            if ($produit['type'] == 'bougie') {
+                                                // GROUPE 1 : LES PARFUMS
+                                                $parfums_propres = array();
+                                                if (isset($produit['parfum']) && $produit['parfum'] != '') {
+                                                    $parfums_array = explode(',', $produit['parfum']);
+                                                    foreach ($parfums_array as $parfum) {
+                                                        $parfum_nettoye = purifier_trim($parfum);
+                                                        if ($parfum_nettoye != '') {
+                                                            $parfums_propres[] = htmlspecialchars($parfum_nettoye);
+                                                        }
+                                                    }
+                                                }
+                                                if (count($parfums_propres) > 0) {
+                                                    echo '<div class="product-tag-line">' . purifier_implode(' / ', $parfums_propres) . '</div>';
+                                                }
+
+                                                // GROUPE 2 : LES AMBIANCES
+                                                $ambiances_propres = array();
+                                                if (isset($produit['ambiances_tags']) && $produit['ambiances_tags'] != '') {
+                                                    $ambiances_array = explode(',', $produit['ambiances_tags']);
+                                                    foreach ($ambiances_array as $ambiance) {
+                                                        $ambiance_nettoyee = purifier_trim($ambiance);
+                                                        if ($ambiance_nettoyee != '') {
+                                                            $ambiances_propres[] = htmlspecialchars($ambiance_nettoyee);
+                                                        }
+                                                    }
+                                                }
+                                                if (count($ambiances_propres) > 0) {
+                                                    echo '<div class="product-tag-line">' . purifier_implode(' / ', $ambiances_propres) . '</div>';
+                                                }
+                                            }
+                                            ?>
+                                        </div>
+
+                                        <!-- BLOC DES AVIS -->
                                         <div class="my-2">
                                             <?php if (isset($produit['nombre_votes']) && $produit['nombre_votes'] > 0) { ?>
                                                 <div class="rating-stars"
@@ -491,10 +568,14 @@ if ($action == 'view') {
                                                     avis</small>
                                             <?php } ?>
                                         </div>
+
+                                        <!-- BLOC PRIX ET BOUTON  -->
                                         <div class="mt-auto">
                                             <p class="card-text h5"><?php echo number_format($produit['prix_ttc'], 2, ',', ' '); ?>
                                                 €</p>
-                                            <form action="panier2.php" method="POST" class="mt-2">
+                                            <form action="panier.php" method="POST" class="mt-2">
+                                                <input type="hidden" name="add_to_cart_token"
+                                                    value="<?php echo $_SESSION['add_to_cart_token']; ?>">
                                                 <input type="hidden" name="action" value="add">
                                                 <input type="hidden" name="product_id"
                                                     value="<?php echo $produit['id_produit']; ?>">
@@ -511,9 +592,6 @@ if ($action == 'view') {
                     } ?>
                 </div>
 
-                <!-- ======================================================= -->
-                <!--  PAGINATION                                             -->
-                <!-- ======================================================= -->
                 <?php if ($totalPages > 1) { ?>
                     <nav class="mt-5">
                         <ul class="pagination justify-content-center">
@@ -521,10 +599,9 @@ if ($action == 'view') {
                                 <li class="page-item <?php if ($i == $filters['page']) {
                                     echo 'active';
                                 } ?>">
-                                    <a class="page-link"
-                                        href="?<?php $params = $_GET;
-                                        $params['page'] = $i;
-                                        echo purifier_http_build_query($params); ?>"><?php echo $i; ?></a>
+                                    <a class="page-link" href="?<?php $params = $_GET;
+                                    $params['page'] = $i;
+                                    echo purifier_http_build_query($params); ?>"><?php echo $i; ?></a>
                                 </li>
                             <?php } ?>
                         </ul>
@@ -534,7 +611,8 @@ if ($action == 'view') {
             </div>
     </main>
     <?php
-} else { // 'vitrine'
+} else { 
+    // Vue de la Vitrine
     ?>
     <main class="container-fluid p-0">
         <section class="text-center p-4" style="background-color: #f8f9fa;">

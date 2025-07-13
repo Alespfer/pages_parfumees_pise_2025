@@ -1,17 +1,23 @@
 <?php
 /*
- * Fichier : panier2.php
- * Rôle : Gère la gestion et l'affichage du panier.
- * Version purifiée respectant la doctrine du cours.
+ * Fichier : panier.php
+ * Rôle : Contrôleur et Vue de la page du panier d'achats.
+ * Ce script a une double responsabilité :
+ *  1. (Contrôleur) Traiter les actions de modification du panier :
+ *     - Ajout d'un produit (add) de manière sécurisée.
+ *     - Mise à jour des quantités (update).
+ *     - Suppression d'un article (remove).
+ *  2. (Vue) Afficher le contenu détaillé du panier et les totaux.
  */
+
 
 session_start();
 require('parametrage/param.php');
 require('fonction/fonctions.php');
 
 // --- TRAITEMENT DES ACTIONS (LOGIQUE CONTRÔLEUR) ---
-// Le cours n'enseigne pas l'opérateur de coalescence nulle '??'.
-// On utilise une cascade de conditions 'if/elseif/else' avec 'isset' pour déterminer l'action.
+// On détermine d'abord si une action est demandée, que ce soit via POST (formulaire) ou GET (lien).
+
 $action = null;
 if (isset($_POST['action'])) {
     $action = $_POST['action'];
@@ -19,14 +25,28 @@ if (isset($_POST['action'])) {
     $action = $_GET['action'];
 }
 
-// On ne traite une action que si elle a été définie.
+// On n'exécute le bloc de traitement que si une action a été clairement identifiée.
 if ($action != null) {
+
+    // --- PROTOCOLE D'IDEMPOTENCE POUR L'AJOUT (éviter double clic) ---
+    if ($action == 'add') {
+        $token_form = isset($_POST['add_to_cart_token']) ? $_POST['add_to_cart_token'] : '';
+        $token_session = isset($_SESSION['add_to_cart_token']) ? $_SESSION['add_to_cart_token'] : '';
+        // Si le jeton envoyé par le formulaire est vide ou ne correspond pas à celui en session, c'est que l'action est invalide (probablement déjà traitée).
+        if ($token_form == '' || $token_form != $token_session) {
+            // L'opération est avortée. On redirige vers le panier sans effectuer d'action pour éviter l'erreur.
+            header('Location: panier.php');
+            exit();
+        }
+    }
+
+    // Cas spécifique de la mise à jour de toutes les quantités en une seule fois.
     if ($action == 'update' && isset($_POST['quantity']) && is_array($_POST['quantity'])) {
-        // La fonction is_array est une construction de base qui peut être considérée comme implicite.
         foreach ($_POST['quantity'] as $id => $qty) {
             handleCartAction('update', (int) $id, (int) $qty);
         }
     } else {
+        // Cas des autres actions (add, remove) qui concernent un seul produit.
         $id_produit = 0;
         if (isset($_POST['product_id'])) {
             $id_produit = (int) $_POST['product_id'];
@@ -38,8 +58,7 @@ if ($action != null) {
         handleCartAction($action, $id_produit, $quantite);
     }
 
-    // Après chaque action, on redirige pour éviter les doubles soumissions (pattern Post-Redirect-Get).
-    header('Location: panier2.php');
+    header('Location: panier.php');
     exit();
 }
 
@@ -49,11 +68,13 @@ $pageTitle = "Votre Panier";
 $panier_session = isset($_SESSION['cart']) ? $_SESSION['cart'] : array();
 $recapitulatif_panier = getCartSummary($panier_session);
 
+
+// On extrait les données du récapitulatif dans des variables plus simples pour la vue.
+
 $articles_panier = $recapitulatif_panier['items'];
 $total_ht = $recapitulatif_panier['total_ht'];
 $total_ttc = $recapitulatif_panier['total_ttc'];
 
-// On vérifie si l'utilisateur est connecté pour l'affichage conditionnel.
 $utilisateur_connecte = isset($_SESSION['user']);
 
 
@@ -67,14 +88,15 @@ require('partials/header.php');
     <h1><?php echo htmlspecialchars($pageTitle); ?></h1>
 
     <?php
-    // La fonction 'empty()' n'est pas enseignée. 'count()' est la méthode sanctionnée (p.40).
+    // Si le panier est vide (count == 0), on affiche un message informatif.
     if (count($articles_panier) == 0) {
         ?>
         <div class="alert alert-info">
             Votre panier est vide. <a href="shop.php">Commencez vos achats !</a>
         </div>
     <?php } else { ?>
-        <form action="panier2.php" method="POST">
+        <!-- Si le panier contient des articles, on affiche le tableau et les actions. -->
+        <form action="panier.php" method="POST">
             <input type="hidden" name="action" value="update">
 
             <div class="table-responsive">
@@ -100,7 +122,7 @@ require('partials/header.php');
                                 </td>
                                 <td class="text-end"><?php echo number_format($item['line_ht'], 2, ',', ' '); ?> €</td>
                                 <td class="text-center">
-                                    <a href="panier2.php?action=remove&product_id=<?php echo $item['id']; ?>"
+                                    <a href="panier.php?action=remove&product_id=<?php echo $item['id']; ?>"
                                         class="btn btn-sm btn-danger" title="Supprimer l'article">Supprimer</a>
                                 </td>
                             </tr>
@@ -131,8 +153,10 @@ require('partials/header.php');
                         </table>
 
                         <?php if ($utilisateur_connecte) { ?>
+                            <!-- Si l'utilisateur est connecté, on affiche le bouton pour finaliser la commande. -->
                             <a href="checkout.php" class="btn btn-success w-100">Valider et Payer</a>
                         <?php } else { ?>
+                            <!-- Sinon, on l'invite à se connecter ou à créer un compte. -->
                             <div class="alert alert-warning text-center">
                                 <a href="auth.php?action=login&redirect=checkout.php">Connectez-vous</a> ou <a
                                     href="auth.php?action=register">créez un compte</a> pour finaliser votre commande.
