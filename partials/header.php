@@ -1,78 +1,95 @@
 <?php
-// Fichier : partials/header.php
-// Rôle : En-tête unifié du site, adapté au design.
-// Gère l'affichage de la bannière, du logo, de la navigation principale
-// et des icônes dynamiques (compte, panier).
+/**
+ * Fichier : /partials/header.php
+ * Rôle : En-tête unifié du site.
+ */
 
-// On s'assure que les dépendances sont chargées une seule fois.
+// Les dépendances sont chargées une seule fois.
 require_once __DIR__ . '/../parametrage/param.php';
 require_once __DIR__ . '/../fonction/fonctions.php';
 
-// Variable pour identifier la page active et styler le lien de menu
-$currentPage = basename($_SERVER['PHP_SELF']);
+// --- Préparation des variables pour le HTML ---
+
+// On vérifie que la variable $activePage existe pour éviter les erreurs.
+if (!isset($activePage)) {
+    $activePage = ''; 
+}
+
+// On définit une seule fois le lien du compte pour éviter la répétition.
+if (isset($_SESSION['user'])) {
+    $userLink = SITE_URL . '/mon_compte.php';
+} else {
+    $userLink = SITE_URL . '/auth.php?action=login';
+}
+
+// Calcul du nombre total d'articles dans le panier :
+$cart_count = 0;
+if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
+    foreach ($_SESSION['cart'] as $quantity) {
+        $cart_count += $quantity;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo (isset($pageTitle) ? htmlspecialchars($pageTitle) . ' - ' : '') . SITE_NAME; ?></title>
 
-    <!-- NOTE : Le lien vers Bootstrap a été supprimé. Seul notre style.css est nécessaire. -->
-    <link rel="stylesheet" href="styles/style.css"> 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/styles/style.css">
 </head>
+
 <body>
 
-    <!-- Bannière supérieure promotionnelle -->
     <div class="top-banner">
         <p>Profitez de la livraison gratuite dès 40 € d’achat avec le code FREESHIP</p>
     </div>
 
-    <!-- En-tête principal avec logo, navigation et icônes -->
     <header class="main-header container">
         <div class="logo">
-            <a href="index.php">
-                <!-- IMPORTANT : Remplacez par le chemin de votre vrai logo -->
-                <img src="assets/images/logo.png" alt="<?php echo SITE_NAME; ?>">
+            <a href="<?php echo SITE_URL; ?>/index.php">
+                <img src="<?php echo SITE_URL; ?>/ressources/logo/logo.png" alt="<?php echo SITE_NAME; ?>">
             </a>
         </div>
 
         <nav class="main-nav">
             <ul>
-                <!-- La classe 'active' est ajoutée dynamiquement en PHP -->
-                <li><a href="index.php" class="<?php if ($currentPage == 'index.php') echo 'active'; ?>">Accueil</a></li>
-                <li><a href="shop.php" class="<?php if ($currentPage == 'shop.php') echo 'active'; ?>">Boutique</a></li>
-                <li><a href="notre_histoire.php" class="<?php if ($currentPage == 'notre_histoire.php') echo 'active'; ?>">Notre Histoire</a></li>
-                <li><a href="contact.php">Contact</a></li>
+                <li><a href="<?php echo SITE_URL; ?>/index.php"
+                        class="<?php if ($activePage == 'accueil') {
+                            echo 'active';
+                        } ?>">Accueil</a></li>
+                <li><a href="<?php echo SITE_URL; ?>/shop.php"
+                        class="<?php if ($activePage == 'boutique') {
+                            echo 'active';
+                        } ?>">Boutique</a></li>
+                <li><a href="<?php echo SITE_URL; ?>/notre_histoire.php"
+                        class="<?php if ($activePage == 'histoire') {
+                            echo 'active';
+                        } ?>">Notre Histoire</a></li>
+                <li><a href="<?php echo SITE_URL; ?>/contact.php"
+                        class="<?php if ($activePage == 'contact') {
+                            echo 'active';
+                        } ?>">Contact</a></li>
             </ul>
         </nav>
 
         <div class="header-icons">
-
-            <!-- Icône Compte : lien dynamique selon la session -->
-            <?php $userLink = isset($_SESSION['user']) ? 'mon_compte.php' : 'auth.php?action=login'; ?>
             <a href="<?php echo $userLink; ?>" aria-label="Mon compte">
-                <img src="assets/icons/user.svg" alt="Icône de compte">
+                <img src="<?php echo SITE_URL; ?>/ressources/decor/icon_compte.png" alt="Icône de compte">
             </a>
-
-            <!-- Icône Panier avec compteur -->
-            <a href="panier.php" class="cart-icon-wrapper" aria-label="Panier">
-                <img src="assets/icons/cart.svg" alt="Icône du panier">
-                <?php 
-                    $cart_count = 0;
-                    if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
-                        // On calcule la quantité totale d'articles, pas juste le nombre de lignes
-                        foreach ($_SESSION['cart'] as $quantity) {
-                            $cart_count += $quantity;
-                        }
-                    }
-                    if ($cart_count > 0) {
-                        echo '<span class="cart-badge">' . $cart_count . '</span>';
-                    }
+            <a href="<?php echo SITE_URL; ?>/panier.php" class="cart-icon-wrapper" aria-label="Panier">
+                <img src="<?php echo SITE_URL; ?>/ressources/decor/icon_panier.png" alt="Icône du panier">
+                <?php
+                if ($cart_count > 0) {
+                    echo '<span class="cart-badge">' . $cart_count . '</span>';
+                }
                 ?>
             </a>
         </div>
     </header>
 
-    <!-- La balise <main> est ouverte ici. Elle sera fermée par le footer.php -->
     <main>

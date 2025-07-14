@@ -58,8 +58,8 @@ if (isset($_POST['form_type'])) {
     switch ($type_formulaire) {
         case 'user_info':
             // Traitement du formulaire de mise à jour des informations personnelles.
-            $nom = purifier_trim(isset($_POST['nom']) ? $_POST['nom'] : '');
-            $prenom = purifier_trim(isset($_POST['prenom']) ? $_POST['prenom'] : '');
+            $nom = trim(isset($_POST['nom']) ? $_POST['nom'] : '');
+            $prenom = trim(isset($_POST['prenom']) ? $_POST['prenom'] : '');
             if ($nom != '' && $prenom != '') {
                 if (updateUserInfo($id_client, array('nom' => $nom, 'prenom' => $prenom))) {
                     $_SESSION['user']['nom'] = $nom;
@@ -104,7 +104,7 @@ if (isset($_POST['form_type'])) {
                     $_SESSION['flash_error'] = $resultat_maj;
                 }
             } else {
-                $_SESSION['flash_error'] = purifier_implode('<br>', $erreurs_mdp);
+                $_SESSION['flash_error'] = implode('<br>', $erreurs_mdp);
             }
             header('Location: mon_compte.php?action=edit_account');
             exit();
@@ -112,10 +112,10 @@ if (isset($_POST['form_type'])) {
         case 'address':
             // Traitement du formulaire d'ajout ou de modification d'adresse.
             $donnees = array(
-                'rue' => purifier_trim(isset($_POST['rue']) ? $_POST['rue'] : ''),
-                'code_postal' => purifier_trim(isset($_POST['code_postal']) ? $_POST['code_postal'] : ''),
-                'ville' => purifier_trim(isset($_POST['ville']) ? $_POST['ville'] : ''),
-                'pays' => purifier_trim(isset($_POST['pays']) ? $_POST['pays'] : ''),
+                'rue' => trim(isset($_POST['rue']) ? $_POST['rue'] : ''),
+                'code_postal' => trim(isset($_POST['code_postal']) ? $_POST['code_postal'] : ''),
+                'ville' => trim(isset($_POST['ville']) ? $_POST['ville'] : ''),
+                'pays' => trim(isset($_POST['pays']) ? $_POST['pays'] : ''),
                 'est_defaut' => isset($_POST['est_defaut']) ? 1 : 0
             );
             $id_adresse = isset($_POST['id_adresse']) ? (int) $_POST['id_adresse'] : 0;
@@ -244,7 +244,7 @@ require('partials/header.php');
 
     <?php switch ($action) {
         // Vue principale du compte avec tous les panneaux.
-
+    
         case 'list':
         default: ?>
             <div class="card mb-4">
@@ -308,12 +308,13 @@ require('partials/header.php');
                         <p>Vous n'avez aucune adresse enregistrée.</p>
                     <?php } else { ?>
                         <div class="table-responsive">
-                            <table class="table table-striped">
+                            <!-- On ajoute la classe "adresse-table" pour un ciblage CSS précis -->
+                            <table class="table table-striped adresse-table">
                                 <thead>
                                     <tr>
                                         <th>Adresse</th>
-                                        <th class="text-center">Par défaut</th>
-                                        <th class="text-end">Actions</th>
+                                        <th>Par défaut</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -321,14 +322,14 @@ require('partials/header.php');
                                         <tr>
                                             <td><?php echo htmlspecialchars($adr['rue'] . ', ' . $adr['code_postal'] . ' ' . $adr['ville'] . ', ' . $adr['pays']); ?>
                                             </td>
-                                            <td class="text-center">
+                                            <td>
                                                 <?php if (isset($adr['est_defaut']) && $adr['est_defaut']) {
                                                     echo '<span class="badge bg-success">Oui</span>';
                                                 } else {
-                                                    echo 'Non';
+                                                    echo '<span class="badge bg-secondary">Non</span>';
                                                 } ?>
                                             </td>
-                                            <td class="text-end">
+                                            <td>
                                                 <a href="mon_compte.php?action=edit&id=<?php echo $adr['id_adresse']; ?>"
                                                     class="btn btn-sm btn-warning">Modifier</a>
                                                 <a href="mon_compte.php?action=delete_address&id=<?php echo $adr['id_adresse']; ?>"
@@ -382,7 +383,7 @@ require('partials/header.php');
                     <?php } ?>
                 </div>
             </div>
-            <br/>
+            <br />
             <div class="d-flex justify-content-end mb-3">
                 <form action="auth.php?action=logout" method="POST">
                     <button type="submit" class="btn btn-danger">Se déconnecter</button>
@@ -391,8 +392,8 @@ require('partials/header.php');
 
             <?php break;
 
-        case 'edit_account': 
-            // Vue de modification des infos personnelles et du mot de passe.?>
+        case 'edit_account':
+            // Vue de modification des infos personnelles et du mot de passe. ?>
             <div class="row">
                 <div class="col-lg-6 mb-4">
                     <div class="card p-4 h-100">
@@ -425,7 +426,7 @@ require('partials/header.php');
                             <div class="mb-3"><label for="new_password_confirm" class="form-label">Confirmer</label><input
                                     type="password" class="form-control" id="new_password_confirm" name="new_password_confirm"
                                     required></div>
-                            <button type="submit" class="btn btn-warning">Changer le mot de passe</button>
+                            <button type="submit" class="btn btn-primary">Changer le mot de passe</button>
                         </form>
                     </div>
                 </div>
@@ -458,7 +459,7 @@ require('partials/header.php');
                                 echo 'checked'; ?>><label
                             class="form-check-label" for="est_defaut">Faire de cette adresse mon adresse par défaut</label>
                     </div>
-                    <button type="submit" class="btn btn-success"><?php if ($action == 'edit') {
+                    <button type="submit" class="btn btn-primary"><?php if ($action == 'edit') {
                         echo 'Enregistrer';
                     } else {
                         echo 'Ajouter l\'adresse';

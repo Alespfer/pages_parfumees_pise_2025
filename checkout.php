@@ -58,10 +58,10 @@ if (isset($_POST['form_token'])) {
 
     // --- VALIDATION DES DONNÉES DU FORMULAIRE ---
     $id_adresse = isset($_POST['id_adresse']) ? (int) $_POST['id_adresse'] : 0;
-    $nom_carte = purifier_trim(isset($_POST['card_name']) ? $_POST['card_name'] : '');
-    $numero_carte = purifier_trim(isset($_POST['card_number']) ? $_POST['card_number'] : '');
-    $expiration_carte = purifier_trim(isset($_POST['card_expiry']) ? $_POST['card_expiry'] : '');
-    $cvc_carte = purifier_trim(isset($_POST['card_cvc']) ? $_POST['card_cvc'] : '');
+    $nom_carte = trim(isset($_POST['card_name']) ? $_POST['card_name'] : '');
+    $numero_carte = trim(isset($_POST['card_number']) ? $_POST['card_number'] : '');
+    $expiration_carte = trim(isset($_POST['card_expiry']) ? $_POST['card_expiry'] : '');
+    $cvc_carte = trim(isset($_POST['card_cvc']) ? $_POST['card_cvc'] : '');
 
     $erreurs_formulaire = array();
     if ($id_adresse == 0 || !getAddressById($id_adresse, $id_client)) {
@@ -102,7 +102,7 @@ if (isset($_POST['form_token'])) {
         }
     } else {
         // La validation a échoué, on retourne à la page avec les erreurs.
-        $_SESSION['flash_message'] = purifier_implode('<br>', $erreurs_formulaire);
+        $_SESSION['flash_message'] = implode('<br>', $erreurs_formulaire);
         header('Location: checkout.php');
         exit();
     }
@@ -125,7 +125,7 @@ foreach ($recapitulatif_panier['items'] as $item) {
 }
 
 if (!$is_stock_ok) {
-    $message_flash_erreur = purifier_implode('<br>', $erreurs_stock);
+    $message_flash_erreur = implode('<br>', $erreurs_stock);
 }
 
 require('partials/header.php');
@@ -137,7 +137,7 @@ require('partials/header.php');
 <main class="container my-4">
 
     <?php if ($est_page_succes && isset($_GET['id'])) { ?>
-         <!-- Vue de succès : affichée après une commande réussie. -->
+        <!-- Vue de succès : affichée après une commande réussie. -->
         <div class="alert alert-success text-center p-5">
             <h1 class="alert-heading">Paiement réussi !</h1>
             <p class="lead">Votre commande n°<?php echo (int) $_GET['id']; ?> a été enregistrée avec succès.</p>
@@ -221,15 +221,21 @@ require('partials/header.php');
                                 required>
                             <input type="text" name="card_number" class="form-control mb-2"
                                 placeholder="Numéro de carte (16 chiffres)" required>
-                            <div class="row">
-                                <div class="col-7"><input type="text" name="card_expiry" class="form-control"
-                                        placeholder="Date d'expiration (MM/AA)" required></div>
-                                <div class="col-5"><input type="text" name="card_cvc" class="form-control" placeholder="CVC"
-                                        required></div>
+                            <div class="row g-2">
+                                <div class="col-7">
+                                    <label for="card_expiry" class="form-label small mb-1">Date d'expiration</label>
+                                    <input type="text" name="card_expiry" id="card_expiry" class="form-control"
+                                        placeholder="MM/AA" required>
+                                </div>
+                                <div class="col-5">
+                                    <label for="card_cvc" class="form-label small mb-1">CVC</label>
+                                    <input type="text" name="card_cvc" id="card_cvc" class="form-control" placeholder="CVC"
+                                        required>
+                                </div>
                             </div>
                         </div>
                         <!-- Le bouton de paiement est désactivé si aucune adresse n'est disponible ou si le stock est insuffisant. -->
-                        <button type="submit" class="btn btn-success w-100 mt-3" <?php if (count($adresses) == 0 || !$is_stock_ok)
+                        <button type="submit" class="btn btn-primary" <?php if (count($adresses) == 0 || !$is_stock_ok)
                             echo 'disabled'; ?>>
                             Payer <?php echo number_format($recapitulatif_panier['total_ttc'], 2, ',', ' '); ?> €
                         </button>

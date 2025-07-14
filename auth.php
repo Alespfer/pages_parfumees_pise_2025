@@ -53,9 +53,9 @@ switch ($action) {
 
         // On vérifie si le formulaire a été soumis.
         if (isset($_POST['email'])) {
-            $nom = purifier_trim(isset($_POST['nom']) ? $_POST['nom'] : '');
-            $prenom = purifier_trim(isset($_POST['prenom']) ? $_POST['prenom'] : '');
-            $email = purifier_trim(isset($_POST['email']) ? $_POST['email'] : '');
+            $nom = trim(isset($_POST['nom']) ? $_POST['nom'] : '');
+            $prenom = trim(isset($_POST['prenom']) ? $_POST['prenom'] : '');
+            $email = trim(isset($_POST['email']) ? $_POST['email'] : '');
             $mot_de_passe = isset($_POST['password']) ? $_POST['password'] : '';
             $mot_de_passe_confirmation = isset($_POST['password_confirm']) ? $_POST['password_confirm'] : '';
 
@@ -104,7 +104,7 @@ switch ($action) {
         En réalité, il faudrait envoyer un vrai e-mail ici. Pour le test, on se contente de générer le jeton et de l'afficher.
          */
         if (isset($_POST['email'])) {
-            $email = purifier_trim(isset($_POST['email']) ? $_POST['email'] : '');
+            $email = trim(isset($_POST['email']) ? $_POST['email'] : '');
             if ($email != '') {
                 $message_succes = "Si un compte est associé à cette adresse, des instructions ont été envoyées.";
 
@@ -178,7 +178,7 @@ switch ($action) {
         }
 
         if (isset($_POST['email'])) {
-            $email = purifier_trim(isset($_POST['email']) ? $_POST['email'] : '');
+            $email = trim(isset($_POST['email']) ? $_POST['email'] : '');
             $mot_de_passe = isset($_POST['password']) ? $_POST['password'] : '';
             $utilisateur = loginUser($email, $mot_de_passe);
 
@@ -250,7 +250,7 @@ require('partials/header.php');
                     foreach ($erreurs as $erreur) {
                         $erreurs_purifiees[] = htmlspecialchars($erreur);
                     }
-                    echo purifier_implode('<br>', $erreurs_purifiees);
+                    echo implode('<br>', $erreurs_purifiees);
                     ?>
                 </div>
             <?php } ?>
