@@ -3,11 +3,11 @@
  * Fichier : panier.php
  * Rôle : Contrôleur et Vue de la page du panier d'achats.
  * Ce script a une double responsabilité :
- *  1. (Contrôleur) Traiter les actions de modification du panier :
+ *  1. Traiter les actions de modification du panier :
  *     - Ajout d'un produit (add) de manière sécurisée.
  *     - Mise à jour des quantités (update).
  *     - Suppression d'un article (remove).
- *  2. (Vue) Afficher le contenu détaillé du panier et les totaux.
+ *  2. Afficher le contenu détaillé du panier et les totaux.
  */
 
 
@@ -34,7 +34,7 @@ if ($action != null) {
         $token_session = isset($_SESSION['add_to_cart_token']) ? $_SESSION['add_to_cart_token'] : '';
         // Si le jeton envoyé par le formulaire est vide ou ne correspond pas à celui en session, c'est que l'action est invalide (probablement déjà traitée).
         if ($token_form == '' || $token_form != $token_session) {
-            // L'opération est avortée. On redirige vers le panier sans effectuer d'action pour éviter l'erreur.
+            // On redirige vers le panier sans effectuer d'action pour éviter l'erreur.
             header('Location: panier.php');
             exit();
         }

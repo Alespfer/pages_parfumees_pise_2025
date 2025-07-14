@@ -1,5 +1,6 @@
 <?php
 // Page : notre_histoire.php
+// Page de présentation du concept du site
 
 $activePage = 'histoire'; 
 
@@ -16,7 +17,6 @@ $activePage = 'histoire';
 
 <body>
 
-    <!-- ===== HEADER ===== -->
     <?php require("partials/header.php"); ?>
 
     <main>
@@ -74,7 +74,6 @@ $activePage = 'histoire';
                     Les Pages Parfumées, c’est avant tout une belle aventure humaine portée par deux passionnés&nbsp;:
                 </p>
 
-                <!-- WRAPPER FLEX -->
                 <div class="team-wrapper">
 
                     <!-- Colonne image -->
@@ -127,10 +126,6 @@ $activePage = 'histoire';
             </div>
         </section>
     </main>
-    <!-- ================== FIN CONTENU PRINCIPAL ================== -->
-
-
-    <!-- ==================== FOOTER ==================== -->
 
     <?php require('partials/footer.php'); ?>
 </body>

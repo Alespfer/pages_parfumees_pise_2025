@@ -40,7 +40,7 @@ if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/styles/new_style.css">
+    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/styles/style.css">
 </head>
 
 <body>

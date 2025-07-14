@@ -7,7 +7,6 @@
 
 session_start();
 
-// Inclusion des fichiers de configuration et de fonctions
 require('parametrage/param.php');
 require('fonction/fonctions.php');
 
@@ -74,7 +73,7 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
 <body>
     <div class="card login-card shadow-sm">
         <div class="card-body">
-            <h3 class="card-title text-center mb-4">L'Atelier des Mots & Lumières</h3>
+            <h3 class="card-title text-center mb-4">Les Pages Parfumées </h3>
             <h5 class="card-subtitle mb-4 text-muted text-center">Espace Administration</h5>
 
             <form method="POST" action="admin_login.php">

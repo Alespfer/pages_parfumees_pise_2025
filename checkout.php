@@ -81,7 +81,6 @@ if (isset($_POST['form_token'])) {
         $erreurs_formulaire[] = "Le code CVC est invalide.";
     }
 
-    // --- DÉCISION FINALE ---
 
     if (count($erreurs_formulaire) == 0) {
         // La validation a réussi, on procède à la création de la commande.
@@ -94,8 +93,7 @@ if (isset($_POST['form_token'])) {
             header('Location: checkout.php?success=1&id=' . $resultat);
             exit();
         } else {
-            // Erreur de stock ou autre, la commande n'a PAS été créée.
-            // On ne détruit pas le jeton, pour que l'utilisateur puisse réessayer.
+            // Erreur de stock ou autre, la commande n'a pas été créée.
             $_SESSION['flash_message'] = $resultat;
             header('Location: checkout.php');
             exit();

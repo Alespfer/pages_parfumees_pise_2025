@@ -1,5 +1,5 @@
 <?php
-// fonction/fonctions_purifiees.php
+// fonction/fonctions.php
 
 
 /***************************************************************************
@@ -49,7 +49,6 @@ function getPDO()
         require_once('parametrage/param.php');
         try {
             $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4';
-            // L'usage de PDO avec exceptions et attributs est enseigné (p. 107, 117).
             $pdo = new PDO($dsn, DB_USER, DB_PASSWORD, array(
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -948,7 +947,7 @@ function getCartSummary(array $cart): array
         'total_ttc' => 0.0,
     ];
 
-    // Cas orthodoxe : panier vide ou non défini.
+    // Panier vide ou non défini.
 
     if (!isset($cart) || count($cart) === 0) {
         return $sum;
@@ -1652,7 +1651,6 @@ function promoteClientToAdmin($idClient)
     $stmtCli->execute(array($idClient));
     $cli = $stmtCli->fetch();
     if (!$cli) {
-        // RETOUR ORTHODOXE : Chaîne de caractères descriptive.
         return 'Client introuvable.';
     }
 
@@ -2072,14 +2070,14 @@ function createProduct($data)
             /* ===== LIVRE ============================================= */
             case 'livre':
                 // Nettoyage des foreign keys potentielles
-                $id_editeur_purified = (isset($data['id_editeur']) && $data['id_editeur'] != '') ? (int) $data['id_editeur'] : null;
-                $annee_purified = (isset($data['annee_publication']) && $data['annee_publication'] != '') ? (int) $data['annee_publication'] : null;
-                $nb_pages_purified = (isset($data['nb_pages']) && $data['nb_pages'] != '') ? (int) $data['nb_pages'] : null;
+                $id_editeur_nettoye = (isset($data['id_editeur']) && $data['id_editeur'] != '') ? (int) $data['id_editeur'] : null;
+                $annee_nettoye = (isset($data['annee_publication']) && $data['annee_publication'] != '') ? (int) $data['annee_publication'] : null;
+                $nb_pages_nettoye = (isset($data['nb_pages']) && $data['nb_pages'] != '') ? (int) $data['nb_pages'] : null;
 
                 // Table `livre`
 
                 $pdo->prepare('INSERT INTO livre (id_produit, titre, isbn, resume, etat, annee_publication, nb_pages, id_editeur) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-                    ->execute(array($id_produit, $data['titre'], $data['isbn'], $data['resume'], $data['etat'], $annee_purified, $nb_pages_purified, $id_editeur_purified));
+                    ->execute(array($id_produit, $data['titre'], $data['isbn'], $data['resume'], $data['etat'], $annee_nettoye, $nb_pages_nettoye, $id_editeur_nettoye));
 
                 // Relations N:N : genres
                 if (isset($data['genres']) && is_array($data['genres'])) {
@@ -2103,12 +2101,12 @@ function createProduct($data)
                 break;
             /* ===== COFFRET ========================================== */
             case 'coffret':
-                $id_livre_purified = (isset($data['id_produit_livre']) && $data['id_produit_livre'] != '') ? (int) $data['id_produit_livre'] : null;
-                $id_bougie_purified = (isset($data['id_produit_bougie']) && $data['id_produit_bougie'] != '') ? (int) $data['id_produit_bougie'] : null;
-                $id_categorie_purified = (isset($data['id_categorie_coffret']) && $data['id_categorie_coffret'] != '') ? (int) $data['id_categorie_coffret'] : null;
+                $id_livre_nettoye = (isset($data['id_produit_livre']) && $data['id_produit_livre'] != '') ? (int) $data['id_produit_livre'] : null;
+                $id_bougie_nettoye = (isset($data['id_produit_bougie']) && $data['id_produit_bougie'] != '') ? (int) $data['id_produit_bougie'] : null;
+                $id_categorie_nettoye = (isset($data['id_categorie_coffret']) && $data['id_categorie_coffret'] != '') ? (int) $data['id_categorie_coffret'] : null;
 
                 $pdo->prepare('INSERT INTO coffret (id_produit, nom, description, id_produit_livre, id_produit_bougie, id_categorie_coffret) VALUES (?, ?, ?, ?, ?, ?)')
-                    ->execute(array($id_produit, $data['nom'], $data['description'], $id_livre_purified, $id_bougie_purified, $id_categorie_purified));
+                    ->execute(array($id_produit, $data['nom'], $data['description'], $id_livre_nettoye, $id_bougie_nettoye, $id_categorie_nettoye));
                 break;
         }
 
@@ -2178,13 +2176,13 @@ function updateProduct($data)
             /* ===== LIVRE ================================================= */
             case 'livre':
                 // On nettoie d’abord les clés étrangères qui peuvent être vides.
-                $id_editeur_purified = (isset($data['id_editeur']) && $data['id_editeur'] != '') ? (int) $data['id_editeur'] : null;
-                $annee_purified = (isset($data['annee_publication']) && $data['annee_publication'] != '') ? (int) $data['annee_publication'] : null;
-                $nb_pages_purified = (isset($data['nb_pages']) && $data['nb_pages'] != '') ? (int) $data['nb_pages'] : null;
+                $id_editeur_nettoye = (isset($data['id_editeur']) && $data['id_editeur'] != '') ? (int) $data['id_editeur'] : null;
+                $annee_nettoye = (isset($data['annee_publication']) && $data['annee_publication'] != '') ? (int) $data['annee_publication'] : null;
+                $nb_pages_nettoye = (isset($data['nb_pages']) && $data['nb_pages'] != '') ? (int) $data['nb_pages'] : null;
 
                 // Mise à jour de la table « livre »
                 $pdo->prepare('UPDATE livre SET titre = ?, isbn = ?, resume = ?, etat = ?, annee_publication = ?, nb_pages = ?, id_editeur = ? WHERE id_produit = ?')
-                    ->execute(array($data['titre'], $data['isbn'], $data['resume'], $data['etat'], $annee_purified, $nb_pages_purified, $id_editeur_purified, $id_produit));
+                    ->execute(array($data['titre'], $data['isbn'], $data['resume'], $data['etat'], $annee_nettoye, $nb_pages_nettoye, $id_editeur_nettoye, $id_produit));
 
                 /* --- Relations N:N (genres & auteurs) ------------------- */
                 // On supprime les anciens liens puis on ajoute la sélection courante
@@ -2209,12 +2207,12 @@ function updateProduct($data)
                 break;
             /* ===== COFFRET ============================================== */
             case 'coffret':
-                $id_livre_purified = (isset($data['id_produit_livre']) && $data['id_produit_livre'] != '') ? (int) $data['id_produit_livre'] : null;
-                $id_bougie_purified = (isset($data['id_produit_bougie']) && $data['id_produit_bougie'] != '') ? (int) $data['id_produit_bougie'] : null;
-                $id_categorie_purified = (isset($data['id_categorie_coffret']) && $data['id_categorie_coffret'] != '') ? (int) $data['id_categorie_coffret'] : null;
+                $id_livre_nettoye = (isset($data['id_produit_livre']) && $data['id_produit_livre'] != '') ? (int) $data['id_produit_livre'] : null;
+                $id_bougie_nettoye = (isset($data['id_produit_bougie']) && $data['id_produit_bougie'] != '') ? (int) $data['id_produit_bougie'] : null;
+                $id_categorie_nettoye = (isset($data['id_categorie_coffret']) && $data['id_categorie_coffret'] != '') ? (int) $data['id_categorie_coffret'] : null;
 
                 $pdo->prepare('UPDATE coffret SET nom = ?, description = ?, id_produit_livre = ?, id_produit_bougie = ?, id_categorie_coffret = ? WHERE id_produit = ?')
-                    ->execute(array($data['nom'], $data['description'], $id_livre_purified, $id_bougie_purified, $id_categorie_purified, $id_produit));
+                    ->execute(array($data['nom'], $data['description'], $id_livre_nettoye, $id_bougie_nettoye, $id_categorie_nettoye, $id_produit));
                 break;
         }
 

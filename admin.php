@@ -12,9 +12,7 @@
 
 session_start();
 
-// Inclusion des fichiers de base :
-// - param.php pour les constantes (ex: infos BDD).
-// - fonctions.php qui contient TOUTE la logique métier et l'accès à la BDD.
+
 require('parametrage/param.php');
 require('fonction/fonctions.php');
 
@@ -383,8 +381,6 @@ switch ($page) {
         </div>
     </nav>
 
-
-    <!-- Conteneur principal qui va englober le contenu spécifique à chaque page. -->
     <div class="container my-4">
 
         <?php
@@ -392,7 +388,6 @@ switch ($page) {
 
         if ($message != null) {
             ?>
-            <!-- L'alerte Bootstrap utilise une classe dynamique ($message_type) pour changer sa couleur -->
             <div class="alert alert-<?php echo htmlspecialchars($message_type); ?> alert-dismissible fade show"
                 role="alert">
                 <?php echo htmlspecialchars($message); ?>

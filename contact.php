@@ -21,7 +21,7 @@ $activePage = 'contact';
 require_once 'partials/header.php';
 
 /***************************************************************************
- * SECTION 1 : INITIALISATION ET PRÉPARATION DES DONNÉES                                             
+  INITIALISATION ET PRÉPARATION DES DONNÉES                                             
  ***************************************************************************/
 
 // On détermine la vue à afficher : 'form' pour le formulaire (par défaut), 'faq' pour la FAQ.
@@ -65,7 +65,7 @@ if ($view === 'faq') {
 
 
 /***************************************************************************
- * SECTION 2 : TRAITEMENT FORMULAIRE                                       *
+  TRAITEMENT FORMULAIRE                                  
  ***************************************************************************/
 if (isset($_POST['submit_contact']) && !isset($_SESSION['contact_envoye'])) {
 
@@ -130,7 +130,7 @@ if (isset($_POST['submit_contact']) && !isset($_SESSION['contact_envoye'])) {
 ?>
 
 <!-- =========================================================================
-     SECTION 3 : AFFICHAGE HTML (LA VUE)
+    AFFICHAGE HTML (LA VUE)
 ========================================================================= -->
 
 <?php if ($view === 'faq') { ?>

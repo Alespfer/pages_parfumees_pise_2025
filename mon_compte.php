@@ -2,8 +2,7 @@
 /*
  * Fichier : mon_compte.php
  * Rôle : Contrôleur et Vue de l'espace personnel du client.
- * Ce fichier est un "mini-site" à lui tout seul. Il gère toutes les facettes
- * du compte d'un utilisateur connecté :
+ * Ce fichier gère toutes les facettes du compte d'un utilisateur connecté :
  *  - Affichage des informations, adresses, commandes, retours.
  *  - Modification des informations personnelles et du mot de passe.
  *  - Ajout, modification, suppression des adresses.
@@ -160,7 +159,6 @@ if (isset($_POST['form_type'])) {
 
 
 // --- TRAITEMENT DES ACTIONS (logique GET) ---
-// Principalement pour les actions de suppression qui utilisent un simple lien.
 
 if ($action == 'delete_address' && $id > 0) {
     if (deleteAddress($id, $id_client)) {
@@ -308,7 +306,6 @@ require('partials/header.php');
                         <p>Vous n'avez aucune adresse enregistrée.</p>
                     <?php } else { ?>
                         <div class="table-responsive">
-                            <!-- On ajoute la classe "adresse-table" pour un ciblage CSS précis -->
                             <table class="table table-striped adresse-table">
                                 <thead>
                                     <tr>
@@ -491,7 +488,7 @@ require('partials/header.php');
                 <div class="card-footer text-end">
                     <?php
                     // La logique d'affichage du bouton de retour.
-                    // Pour que le bouton soit actif, il faut DEUX conditions :
+                    // Pour que le bouton soit actif, il faut deux conditions :
                     // 1. La commande doit être au statut "Livrée".
                     // 2. Il ne doit pas y avoir de demande de retour déjà en cours pour cette commande.                    
                     $condition_retour_possible = (isset($details_commande['statut_libelle']) && $details_commande['statut_libelle'] == 'Livrée');

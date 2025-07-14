@@ -7,12 +7,10 @@
  *  - Inscription (register)
  *  - Déconnexion (logout)
  *  - Procédure de mot de passe oublié (forgot/reset)
- * Il utilise une structure de type "switch" pour aiguiller l'utilisateur vers la bonne action.
  */
 
 session_start();
 
-// Inclusion des dépendances
 require('parametrage/param.php');
 require('fonction/fonctions.php');
 
@@ -101,7 +99,6 @@ switch ($action) {
         $jeton_genere = null; // Variable pour afficher le lien de test dans la vue.
         /*
         On affiche un message générique pour ne pas révéler si un e-mail existe ou non dans la BDD. $message_succes = "Si un compte est associé à cette adresse, des instructions ont été envoyées.";
-        En réalité, il faudrait envoyer un vrai e-mail ici. Pour le test, on se contente de générer le jeton et de l'afficher.
          */
         if (isset($_POST['email'])) {
             $email = trim(isset($_POST['email']) ? $_POST['email'] : '');

@@ -1,7 +1,7 @@
 <?php
 /*
  * Fichier : index.php
- * Rôle : Contrôleur et Vue de la page d'accueil (Vitrine).
+ * Rôle : Contrôleur et Vue de la page d'accueil.
  */
 
 // --- INITIALISATION ---
@@ -20,7 +20,7 @@ $bougies_showcase = getFilteredProducts(['type' => 'bougie', 'limit' => 3, 'sort
 $coffrets_showcase = getFilteredProducts(['type' => 'coffret', 'limit' => 3, 'sort' => 'nouveaute']);
 
 // Pour la section "Nouveauté", on peut prendre un mix
-$nouveautes = getFilteredProducts(['limit' => 4, 'sort' => 'nouveaute']);
+$nouveautes = getFilteredProducts(['limit' => 3, 'sort' => 'nouveaute']);
 
 // Inclusion du header
 require('partials/header.php');
@@ -105,17 +105,14 @@ require('partials/header.php');
         <div class="product-grid">
 
             <?php
-            // CHANGEMENT 1 : Syntaxe "if" avec accolades et "count()"
             if (count($nouveautes) > 0) {
 
-                // CHANGEMENT 2 : Syntaxe "foreach" avec accolades
                 foreach ($nouveautes as $produit) {
                     ?>
 
                     <div class="product-card">
                         <a href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>" class="product-card__image-link">
                             <img class="product-card__image" src="<?php
-                            // CHANGEMENT 3 : Syntaxe "isset" classique au lieu de "??"
                             echo htmlspecialchars(
                                 isset($produit['image_url']) && $produit['image_url'] != ''
                                 ? $produit['image_url']
@@ -140,18 +137,18 @@ require('partials/header.php');
                     </div>
 
                     <?php
-                } // Fin du foreach
+                } 
             
-            } else { // CHANGEMENT 4 : Syntaxe "else" avec accolades
+            } else { 
                 ?>
                 <p style="text-align: center; grid-column: 1 / -1;">Aucune nouveauté à afficher pour le moment.</p>
                 <?php
-            } // Fin du if
+            } 
             ?>
 
-        </div> <!-- Fin de .product-grid -->
+        </div> 
     </section>
-    </div> <!-- Fin de .product-grid -->
+    </div> 
     </section>
 
     <!-- Section Témoignages -->
@@ -202,7 +199,7 @@ require('partials/header.php');
                     <cite class="testimonial-card__author">— Thomas B.</cite>
                 </div>
 
-            </div> <!-- Fin de .testimonials-grid -->
+            </div> 
         </div>
     </section>
 

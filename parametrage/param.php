@@ -8,7 +8,7 @@ define('DB_USER', 'root');
 define('DB_PASSWORD', '');
 
 // -- Constantes globales du site --
-define('SITE_URL', 'http://localhost/projet3'); 
+define('SITE_URL', 'http://localhost/pages_parfumees'); 
 define('SITE_NAME', 'Les Pages Parfumées');
 define('PRODUITS_PAR_PAGE', 10);
 define('PASSWORD_ALGO', PASSWORD_DEFAULT);

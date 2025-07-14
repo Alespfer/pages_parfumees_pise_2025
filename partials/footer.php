@@ -37,19 +37,24 @@
                     <li><a href="panier.php">Mon Panier</a></li>
                 </ul>
             </div>
-            <div class="main-footer__socials">
+
+            <!-- LA CORRECTION EST ICI : LES RÉSEAUX SOCIAUX SONT MAINTENANT DANS LEUR PROPRE COLONNE. -->
+            <div class="main-footer__column">
+                <h4>Suivez-nous</h4>
+                <div class="main-footer__socials">
                     <a href="#" title="Facebook"><img src="ressources/reseaux/facebook.png" alt="Facebook"></a>
                     <a href="#" title="Instagram"><img src="ressources/reseaux/insta.png" alt="Instagram"></a>
                     <a href="#" title="TikTok"><img src="ressources/reseaux/tiktok.png" alt="TikTok"></a>
                     <a href="#" title="Linkedin"><img src="ressources/reseaux/linkedin.png" alt="Linkedin"></a>
                     <a href="#" title="Youtube"><img src="ressources/reseaux/youtube.png" alt="Youtube"></a>
-
+                </div>
             </div>
 
+        </div> <!-- Fin de .main-footer__grid -->
 
-        </div>
         <div class="main-footer__copyright">
-            © <?php echo date('Y'); ?> Les Pages Parfumées. Tous droits réservés.
+            <!-- LA CORRECTION EST ICI : Le texte est dans un paragraphe. C'est plus propre. -->
+            <p>© <?php echo date('Y'); ?> Les Pages Parfumées. Tous droits réservés.</p>
         </div>
     </div>
 </footer>
@@ -72,12 +77,12 @@
                 // Ferme tous les autres items
                 accordionItems.forEach(otherItem => {
                     if (otherItem !== item) {
-                       otherItem.classList.remove('active');
-                       otherItem.querySelector('.accordion-content').style.maxHeight = null;
-                       otherItem.querySelector('.accordion-icon').textContent = '+';
+                        otherItem.classList.remove('active');
+                        otherItem.querySelector('.accordion-content').style.maxHeight = null;
+                        otherItem.querySelector('.accordion-icon').textContent = '+';
                     }
                 });
-                
+
                 // Ouvre ou ferme l'item cliqué
                 if (!isActive) {
                     item.classList.add('active');
