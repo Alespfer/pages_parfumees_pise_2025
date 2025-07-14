@@ -1,0 +1,2515 @@
+/* ==========================================================================
+   LES PAGES PARFUMÉES - FEUILLE DE STYLE PRINCIPALE
+   ==========================================================================
+   Ce fichier unifie le design du site. Il contient :
+   1. Les styles globaux (polices, couleurs, reset).
+   2. Les styles des composants réutilisables (header, footer, conteneurs).
+   3. La redéfinition des classes Bootstrap (cards, forms, buttons, alerts) pour correspondre à l'identité visuelle du site.
+   4. Les styles spécifiques à chaque page (accueil, boutique, compte...).
+   ========================================================================== */
+
+/* --- 1. FONTS & VARIABLES GLOBALES --- */
+@import url('https://fonts.googleapis.com/css2?family=Bona+Nova:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:wght@400;600;700&display=swap');
+
+:root {
+    --font-title: 'Cormorant Garamond', serif;
+    --font-body: 'Bona Nova', serif;
+
+    --color-background: #FFFFFF;
+    --color-background-accent: #E5DDCE;
+    /* Crème pour fonds de section */
+    --color-text-inverted: #fff;
+    --color-background-deep: #E5DDCE;
+    --color-text-body: #4B360D;
+    --color-text-heading: #2d2a26;
+    --color-text-muted: #6c757d;
+    --color-text-inverted: #FFFFFF;
+    --color-primary: #A38968;
+    --color-secondary: #5a8a6f;
+    --color-danger: #c0392b;
+    --color-border: #dcd3bf;
+    --border-radius: 4px;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --container-width: 1200px;
+    --header-height: 80px;
+    --color-banner: #E8DECB;
+
+}
+
+/* --- 2. STYLES DE BASE & RESET --- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-body);
+    background-color: #FFFFFF;
+    color: var(--color-text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-title);
+    font-weight: 600;
+    color: #000;
+    margin-top: 0;
+}
+
+a {
+    text-decoration: none;
+    color: var(--color-primary);
+}
+
+a:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+p {
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.container-fluid {
+    width: 100%;
+    padding: 0;
+}
+
+.container.narrow {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Utilitaires d'espacement de Bootstrap */
+.my-4 {
+    margin-top: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.my-5 {
+    margin-top: 3rem !important;
+    margin-bottom: 3rem !important;
+}
+
+.mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+.mt-3 {
+    margin-top: 1rem !important;
+}
+
+.p-4 {
+    padding: 1.5rem !important;
+}
+
+.p-5 {
+    padding: 3rem !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.text-muted {
+    color: var(--color-text-light) !important;
+}
+
+/* --- 3. COMPOSANTS GLOBAUX (HEADER, FOOTER) --- */
+
+/* Bannière supérieure */
+.top-banner {
+    background-color: var(--color-background-accent);
+    text-align: center;
+    padding: 10px 0;
+    font-family: var(--font-title);
+    font-style: italic;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+/* Header principal */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+}
+
+.main-header .logo img {
+    width: 100px;
+}
+
+.main-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 40px;
+}
+
+.main-nav a {
+    font-family: var(--font-title);
+    font-size: 24px;
+    font-weight: 600;
+    padding-bottom: 5px;
+    color: var(--color-text);
+}
+
+.main-nav a.active,
+.main-nav a:hover {
+    border-bottom: 2px solid var(--color-primary);
+    text-decoration: none;
+}
+
+.header-icons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.header-icons img {
+    width: 28px;
+    height: 28px;
+}
+
+/* Footer principal */
+.main-footer {
+    background-color: var(--color-bg-accent);
+    padding: 60px 40px;
+    color: #000;
+    font-size: 16px;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.footer-column h4 {
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-column li {
+    margin-bottom: 10px;
+}
+
+.footer-column a {
+    color: var(--color-text);
+}
+
+
+/* --- 4. RÉINTERPRÉTATION DES CLASSES BOOTSTRAP --- */
+
+/* Boutons */
+.btn {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    text-decoration: none;
+    opacity: 0.9;
+}
+
+.btn-primary {
+    color: var(--color-primary-text);
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.btn.btn-primary:hover {
+    color: white !important;
+    background-color: #a67c52 !important;
+    /* exemple de brun plus intense */
+    border-color: #a67c52 !important;
+    transition: 0.3s ease;
+}
+
+.btn--primary.cta-large {
+    display: inline-block;
+    background: #EFE5CE;
+    /* beige maquette */
+    color: #000;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    /* ≃ 35 px */
+    font-weight: 500;
+    line-height: 1.15;
+
+    min-width: 274px;
+    /* largeur fixe maquette */
+    height: 39px;
+    /* hauteur fixe maquette */
+    padding: 0 2.5rem;
+    /* espace latéral */
+    border-radius: 10px;
+    border: 1px solid transparent;
+    /* garde la hauteur si on change le bg */
+
+    text-align: center;
+    transition: all .3s ease;
+}
+
+/* Hover cohérent avec le reste du site */
+.btn--primary.cta-large:hover {
+    background: #a67c52 !important;
+    /* brun principal */
+    border-color: #a67c52 !important;
+    color: #fff !important;
+    /* texte blanc */
+}
+
+.btn-secondary {
+    color: var(--color-text);
+    background-color: transparent;
+    border-color: var(--color-text);
+}
+
+.btn-success {
+    color: #fff;
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+}
+
+.btn-danger {
+    color: #fff;
+    background-color: var(--color-danger);
+    border-color: var(--color-danger);
+}
+
+.btn-warning {
+    color: #fff;
+    background-color: var(--color-warning);
+    border-color: var(--color-warning);
+}
+
+.btn-info {
+    color: var(--color-text);
+    background-color: var(--color-info);
+    border-color: var(--color-info);
+}
+
+.w-100 {
+    width: 100% !important;
+}
+
+/* Formulaires */
+.form-label {
+    margin-bottom: 0.5rem;
+    display: inline-block;
+    font-weight: bold;
+}
+
+.form-control,
+.form-select {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    line-height: 1.5;
+    color: var(--color-text);
+    background-color: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--color-primary);
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(163, 137, 104, 0.25);
+}
+
+textarea.form-control {
+    min-height: 120px;
+}
+
+/* Newsletter Form (Footer) */
+.newsletter-form {
+    display: flex;
+    margin-top: 15px;
+}
+
+.newsletter-form input {
+    flex-grow: 1;
+    border: 1px solid var(--color-text);
+    background: white;
+    font-size: 1rem;
+    padding: 10px;
+    border-right: none;
+}
+
+.newsletter-form button {
+    padding: 10px 20px;
+    border: 1px solid var(--color-text);
+    background: var(--color-text);
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.shop-section__title,
+.shop-section__cta {
+    text-align: center;
+}
+
+
+
+.shop-header {
+    background-color: var(--color-banner);
+    text-align: center;
+    padding: 3rem 0 2.5rem;
+    /* espace haut/bas */
+    width: 100%;
+    /* occupe toute la largeur */
+}
+
+.shop-header__title {
+    /* "Tous Nos Produits" */
+    font-size: 3.125rem;
+    text-align: center;
+    font-family: var(--font-title);
+    font-weight: 600;
+    margin: 0 0 .75rem;
+}
+
+.shop-header__subtitle {
+    /* phrase d’accroche */
+    font-size: 1.125rem;
+    text-align: center;
+    /* ≃ 18 px */
+    max-width: 50rem;
+    /* limite la longueur du texte */
+    margin: 0 auto;
+}
+
+
+/* Cartes (Card) */
+.card {
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background-color: var(--color-bg-light);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-header {
+    padding: 1rem 1.5rem;
+    background-color: #e2d9c2;
+    border-bottom: 1px solid var(--color-border);
+}
+
+
+/* Alertes */
+.alert {
+    position: relative;
+    padding: 1rem 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-success {
+    color: var(--color-text);
+    background-color: #d1e7dd;
+    border-color: #badbcc;
+}
+
+.alert-danger {
+    color: var(--color-text);
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+}
+
+.alert-warning {
+    color: var(--color-text);
+    background-color: #fff3cd;
+    border-color: #ffecb5;
+}
+
+.alert-info {
+    color: var(--color-text);
+    background-color: var(--color-info);
+    border-color: #d9d1c0;
+}
+
+/* Tables */
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    vertical-align: top;
+    border-color: var(--color-border);
+}
+
+.table th,
+.table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.table thead th {
+    vertical-align: bottom;
+    border-bottom-width: 2px;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    text-align: center;
+}
+
+
+
+/* Badges */
+/* 1. La base du badge : on le rend plus élégant */
+/* ==========================================================================
+   BADGES - DÉFINITION FINALE ET COMPLÈTE
+   ========================================================================== */
+
+/* 1. Style de base pour tous les badges */
+.badge {
+    display: inline-block;
+    padding: 0.4em 0.8em;
+    font-size: 0.85em;
+    font-family: var(--font-body);
+    font-weight: bold;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    border-radius: var(--border-radius);
+    border: 1px solid transparent; /* Bordure par défaut transparente */
+}
+
+/* 2. Mappage des statuts de ta fonction PHP vers TA charte graphique */
+
+/* STATUTS POSITIFS FINALS (vert) */
+.badge.bg-success {
+    background-color: var(--color-secondary); /* Le vert de ta charte */
+    color: var(--color-text-inverted);
+}
+
+/* STATUTS EN COURS / INFORMATIFS (brun) */
+.badge.bg-info {
+    background-color: var(--color-primary); /* Le brun de ta charte */
+    color: var(--color-text-inverted);
+}
+
+/* STATUTS EN ATTENTE / AVERTISSEMENT (beige avec bordure) */
+.badge.bg-warning {
+    background-color: var(--color-background-accent); /* Le beige de ta charte */
+    color: var(--color-text-body);
+    border-color: var(--color-border);
+}
+/* Bootstrap ajoute `text-dark` sur le bg-warning, on s'assure que notre couleur gagne */
+.badge.bg-warning.text-dark {
+    color: var(--color-text-body) !important;
+}
+
+
+/* STATUTS NÉGATIFS (rouge) */
+.badge.bg-danger {
+    background-color: var(--color-danger);
+    color: var(--color-text-inverted);
+}
+
+/* STATUT PAR DÉFAUT (gris clair) */
+.badge.bg-secondary {
+    background-color: #e9ecef;
+    color: var(--color-background);
+}
+
+/* Grille (Row/Col) */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.col-md-5,
+.col-md-6,
+.col-md-7,
+.col-lg-3,
+.col-lg-4,
+.col-lg-6,
+.col-lg-8,
+.col-lg-9 {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+/* --- 5. STYLES SPÉCIFIQUES AUX PAGES --- */
+
+/* Accueil (index.php) */
+.hero {
+    position: relative;
+    text-align: left;
+    color: #000;
+}
+
+.hero img.hero-background {
+    width: 100%;
+    height: 600px;
+    object-fit: cover;
+    display: block;
+}
+
+.hero .hero-content {
+    position: absolute;
+    top: 50%;
+    left: 80px;
+    transform: translateY(-50%);
+    max-width: 600px;
+}
+
+.hero h1 {
+    font-size: 50px;
+    margin: 0;
+}
+
+.hero p {
+    font-size: 28px;
+    margin: 20px 0 40px;
+}
+
+.hero .btn {
+    padding: 15px 40px;
+    font-size: 20px;
+}
+
+.story-section {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    padding: 80px;
+    justify-content: center;
+}
+
+.story-content h2 {
+    font-size: 45px;
+}
+
+.story-content p {
+    font-size: 28px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+}
+
+.story-image img {
+    width: 400px;
+    height: auto;
+    object-fit: cover;
+}
+
+.category-grid {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 50px 80px;
+    text-align: center;
+}
+
+.category-card img {
+    width: 100%;
+    max-width: 330px;
+    height: 450px;
+    object-fit: cover;
+    margin-bottom: 20px;
+}
+
+.category-card a {
+    font-family: var(--font-title);
+    font-weight: 700;
+    font-size: 30px;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 45px;
+    margin: 80px 0 50px;
+}
+
+.testimonials {
+    padding: 100px 40px;
+    background-color: var(--color-bg-light);
+}
+
+.testimonial-grid {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+}
+
+.testimonial-card {
+    background-color: white;
+    padding: 80px 30px 30px;
+    text-align: center;
+    max-width: 380px;
+    position: relative;
+    border: 1px solid var(--color-border);
+}
+
+.testimonial-card .avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid var(--color-bg-light);
+}
+
+.testimonial-card h3 {
+    font-size: 24px;
+    font-family: var(--font-body);
+    font-weight: 700;
+}
+
+.testimonial-card blockquote p {
+    font-size: 20px;
+    line-height: 1.5;
+    font-style: italic;
+}
+
+.testimonial-card cite {
+    display: block;
+    text-align: right;
+    font-size: 20px;
+    margin-top: 20px;
+    font-style: normal;
+}
+
+
+/* Boutique & Fiche Produit (shop.php) */
+.rating-stars {
+    display: inline-block;
+    position: relative;
+    font-size: 1.2rem;
+    line-height: 1;
+    color: #e9ecef;
+}
+
+.rating-stars-large {
+    font-size: 1.8rem;
+}
+
+.stars-background {
+    position: relative;
+    z-index: 1;
+}
+
+.stars-foreground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    color: #ffc107;
+    z-index: 2;
+}
+
+.product-detail-image-container img {
+    width: 100%;
+    max-height: 550px;
+    height: auto;
+    object-fit: contain;
+}
+
+/* NOUVEAU CODE CORRIGÉ */
+.product-tags-container {
+    text-align: center;
+}
+
+/* NOUVEAU CODE CORRIGÉ ET DÉFINITIF */
+/* Ces styles ne s'appliquent QUE si le conteneur a du contenu (les étiquettes) */
+.product-tags-container:not(:empty) {
+    /* On retire la hauteur minimale qui créait l'espace vide. */
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.product-tag-line {
+    text-align: center;
+    display: inline-block;
+    background-color: var(--color-bg-accent);
+    color: var(--color-text);
+    font-size: 0.8em;
+    padding: 0.3em 0.8em;
+    border-radius: 10px;
+    margin: 3px 2px;
+    max-width: 90%;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: #3E2F1C;
+}
+
+
+.nav-pills .nav-link {
+    color: var(--color-text);
+}
+
+.nav-pills .nav-link.active {
+    background-color: var(--color-primary);
+    color: var(--color-primary-text);
+}
+
+
+/* ==========================================================================
+   MON COMPTE : UNIFORMISATION DES TABLEAUX
+   ========================================================================== */
+.account-table th,
+.account-table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* On garde une exception pour le nom de l'adresse, qui est mieux à gauche */
+.account-table td:first-child {
+    text-align: left;
+}
+
+.rating-stars {
+    display: inline-block;
+    position: relative;
+    font-size: 1.2rem;
+    line-height: 1;
+    color: #e9ecef;
+}
+
+.rating-stars-large {
+    font-size: 1.8rem;
+}
+
+.stars-background {
+    position: relative;
+    z-index: 1;
+}
+
+.stars-foreground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    color: #ffc107;
+    z-index: 2;
+}
+
+.product-detail-image-container img {
+    width: 100%;
+    max-height: 550px;
+    height: auto;
+    object-fit: contain;
+}
+
+.product-tags-container {
+    min-height: 52px;
+    /* Espace pour deux lignes de badges */
+    text-align: center;
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+/* Le style du "rectangle" / badge */
+.product-tag-line {
+    display: inline-block;
+    /* <-- LA CLÉ : Permet au div d'avoir un fond et des dimensions */
+    background-color: #EFEBDF;
+    /* Fond beige de la maquette */
+    color: #343a40;
+    font-family: 'Abhaya Libre', serif;
+    font-size: 0.8em;
+    padding: 0.3em 0.8em;
+    /* Espace intérieur */
+    border-radius: 10px;
+    /* Bords arrondis */
+    margin: 3px 2px;
+    /* Espace entre les badges s'ils sont côte à côte ou l'un sur l'autre */
+    max-width: 90%;
+    /* Empêche le badge d'être trop large sur mobile */
+}
+
+.footer-benefits {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 80px;
+    /* distance horizontale */
+    padding: 70px 20px 60px;
+    background: #fff;
+}
+
+.benefit {
+    width: 220px;
+    /* largeur fixe pour aligner les 3 */
+    text-align: center;
+}
+
+/* Taille (plus grande) des pictos PNG dans la bande avantages */
+.benefit img {
+    width: 130px;
+    /* ajuste ici : 96 px, 110 px, 120 px… */
+    height: auto;
+    /* conserve les proportions de ton PNG */
+    display: block;
+    margin: 0 auto 1rem;
+}
+
+
+.benefit h5 {
+    font-family: var(--font-title);
+    font-size: 1.25rem;
+    /* ≃ 20 px */
+    font-weight: 600;
+    margin: .25rem 0 .5rem;
+}
+
+.benefit p {
+    font-family: var(--font-body);
+    font-size: .9rem;
+    line-height: 1.4;
+    margin: 0;
+}
+
+
+
+.hero-section {
+    padding: 80px 20px;
+    background: #f3ecdf;
+}
+
+.hero-title {
+    font-family: var(--font-title);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+    font-family: var(--font-body);
+    font-size: 1.4rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+.hero-subtitle-histoire {
+    font-family: var(--font-body);
+    text-align: center;
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.section {
+    padding: 80px 20px;
+}
+
+
+
+/* Grille à 3 colonnes centrées */
+.process-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 60px;
+    justify-items: center;
+    margin: 50px auto;
+}
+
+/* Cadre homogène pour chaque visuel */
+.process-item {
+    width: 230px;
+    /* même largeur pour tous */
+    text-align: center;
+}
+
+/* Image “plein cadre” */
+.process-item img {
+    width: 100%;
+    height: 230px;
+    /* même hauteur pour tous */
+    object-fit: cover;
+    /* rogne au besoin, pas de déformation */
+    border-radius: 10px;
+    /* option esthétique */
+}
+
+/* Légende */
+.process-item figcaption {
+    margin-top: .75rem;
+    font-family: var(--font-title);
+    font-size: 1.05rem;
+    line-height: 1.3;
+}
+
+.team-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.team-member {
+    flex: 1;
+    min-width: 280px;
+}
+
+.team-member h3 {
+    margin-bottom: .5rem;
+}
+
+.team-member .role {
+    font-style: italic;
+    color: #555;
+    margin-bottom: .5rem;
+}
+
+
+
+@media(max-width:700px) {
+    .process-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* Responsive : empile les items si l’écran est étroit */
+@media(max-width:650px) {
+    .footer-benefits {
+        flex-direction: column;
+        gap: 40px;
+    }
+}
+
+
+/* --- 6. RESPONSIVE --- */
+@media (min-width: 768px) {
+
+    /* Medium devices (tablets, 768px and up) */
+    .col-md-5 {
+        flex: 0 0 41.666667%;
+        max-width: 41.666667%;
+    }
+
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .col-md-7 {
+        flex: 0 0 58.333333%;
+        max-width: 58.333333%;
+    }
+}
+
+@media (min-width: 992px) {
+
+    /* Large devices (desktops, 992px and up) */
+    .col-lg-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+
+    .col-lg-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+
+    .col-lg-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .col-lg-8 {
+        flex: 0 0 66.666667%;
+        max-width: 66.666667%;
+    }
+
+    .col-lg-9 {
+        flex: 0 0 75%;
+        max-width: 75%;
+    }
+}
+
+@media (max-width: 991px) {
+    .main-header {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .story-section {
+        flex-direction: column;
+        padding: 40px 20px;
+    }
+
+    .testimonial-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 767px) {
+    .hero .hero-content {
+        position: static;
+        transform: none;
+        padding: 40px 20px;
+        text-align: center;
+        max-width: 100%;
+    }
+
+    .hero h1 {
+        font-size: 36px;
+    }
+
+    .hero p {
+        font-size: 20px;
+    }
+
+    .main-nav ul {
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .main-nav a {
+        font-size: 20px;
+    }
+
+    .category-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* ==========================================================================
+   CSS ADDITIONNEL POUR LE HEADER UNIFIÉ
+   ========================================================================== */
+
+/* Ajustements pour les icônes du header */
+.header-icons img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+}
+
+.header-icons a:hover img {
+    transform: scale(1.1);
+}
+
+/* Conteneur pour l'icône du panier pour positionner le badge */
+.cart-icon-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* Style du badge (compteur) sur l'icône du panier */
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+
+    background-color: var(--color-danger);
+    color: white;
+
+    font-size: 12px;
+    font-weight: bold;
+    font-family: var(--font-sans, sans-serif);
+    /* Police sans-serif pour la lisibilité */
+
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px white;
+    /* Petit contour blanc */
+}
+
+
+/* ==========================================================================
+   STYLES POUR LA PAGE DE CONTACT
+   ========================================================================== */
+
+.contact-container {
+    max-width: 650px;
+    margin: 4rem auto;
+    /* Centre le conteneur et ajoute de l'espace en haut/bas */
+    padding: 2rem 3rem;
+    background-color: var(--color-bg-light);
+    /* Fond crème comme les cartes */
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+}
+
+.contact-container h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Style pour le formulaire lui-même */
+.contact-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.contact-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-family: var(--font-title);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.contact-form input[type="text"],
+.contact-form input[type="email"],
+.contact-form textarea {
+    /* On réutilise les styles de .form-control pour la cohérence */
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    line-height: 1.5;
+    color: var(--color-text);
+    background-color: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    border-color: var(--color-primary);
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(163, 137, 104, 0.25);
+}
+
+.contact-form .btn {
+    width: 100%;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+/* Message de salutation pour l'utilisateur connecté */
+.contact-greeting {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: var(--color-info);
+    border-radius: 4px;
+    font-style: italic;
+}
+
+/* Bloc d'erreurs */
+.contact-errors {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
+    border-radius: 4px;
+}
+
+.contact-errors ul {
+    margin-bottom: 0;
+    padding-left: 20px;
+}
+
+/* Message de succès après envoi */
+.contact-success {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.contact-success h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.contact-success .btn {
+    margin-top: 1.5rem;
+}
+
+/* --- Styles spécifiques à la page d'accueil (index.php) --- */
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    font-weight: 600;
+}
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    height: 60vh;
+    min-height: 450px;
+    display: flex;
+    align-items: center;
+    color: var(--color-text);
+    text-align: left;
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.hero-background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.8;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    font-weight: 600;
+}
+
+.hero-content p {
+    font-size: 1.5rem;
+    max-width: 600px;
+    margin: 20px 0 30px;
+}
+
+/* Story Section */
+.story-section {
+    padding: 60px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+}
+
+.story-image img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--border-radius);
+}
+
+.story-content h2 {
+    font-size: 2.5rem;
+}
+
+/* Category Preview Section */
+.category-preview-section {
+    padding: 60px 0;
+    background-color: #F5F0E8;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    text-align: center;
+}
+
+.category-card a {
+    display: block;
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.category-card img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    margin-bottom: 15px;
+    transition: transform 0.3s ease;
+}
+
+.category-card a:hover img {
+    transform: scale(1.03);
+}
+
+.category-card h3 {
+    font-family: var(--font-title);
+    font-size: 1.8rem;
+}
+
+/* New Arrivals Section */
+.new-arrivals-section {
+    padding: 60px 0;
+}
+
+/* Testimonials Section */
+.testimonials-section {
+    padding: 60px 0;
+    background-color: var(--color-bg);
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.testimonial-card {
+    background-color: #EFE5CE;
+    padding: 80px 30px 30px;
+    text-align: center;
+    position: relative;
+    border-radius: var(--border-radius);
+}
+
+.testimonial-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid var(--color-bg);
+}
+
+.testimonial-card h3 {
+    font-size: 1.3rem;
+    font-family: var(--font-body);
+    font-weight: 700;
+}
+
+.testimonial-card blockquote {
+    border: none;
+    margin: 15px 0;
+    padding: 0;
+    font-style: italic;
+}
+
+.testimonial-card cite {
+    display: block;
+    font-style: normal;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+/* ==========================================================================
+   5. COMPOSANTS ET SECTIONS SPÉCIFIQUES
+   ========================================================================== */
+
+/* --- Système de Grille de Produits (pour Nouveautés, Boutique, etc.) --- */
+.product-grid {
+    display: grid;
+    /* Crée 3 colonnes de taille égale, l'espace restant étant flexible */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.product-grid-vitrine {
+
+    display: grid;
+    /* CORRECTION : Crée maintenant 4 colonnes de taille égale */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    /* Je réduis légèrement l'espacement pour que 4 cartes rentrent confortablement */
+
+}
+
+/* Appliquer le style de grille aussi aux catégories */
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.product-card {
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background-color: var(--color-bg-light);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.product-card__image-link {
+    display: block;
+    background-color: #fff;
+    /* Fond blanc pour les images */
+}
+
+/* LA RÈGLE CLÉ POUR LA TAILLE DES IMAGES */
+.product-card__image {
+    aspect-ratio: 3 / 4;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Remplit l'espace sans déformer l'image */
+}
+
+.product-card__content {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card__title {
+    font-size: 1.3rem;
+    margin: 0 0 10px 0;
+    min-height: 2.6em;
+    /* Espace pour 2 lignes de titre */
+}
+
+.product-card__title a {
+    color: var(--color-text);
+}
+
+.product-card__title a:hover {
+    color: var(--color-primary);
+}
+
+.product-card__price {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: auto 0 15px 0;
+}
+
+.product-card__actions .btn {
+    border-width: 2px;
+}
+
+/* --- Styles de la Page d'Accueil --- */
+.section-padding {
+    padding: 60px 0;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.8rem;
+    margin-bottom: 40px;
+}
+
+.hero-section {
+    position: relative;
+    height: 60vh;
+    min-height: 450px;
+    display: flex;
+    align-items: center;
+    color: var(--color-text);
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-color: var(--color-bg-light);
+}
+
+.hero-background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+}
+
+.hero-content p {
+    font-size: 1.5rem;
+    max-width: 600px;
+    margin: 20px 0 30px;
+}
+
+/* --- Header --- */
+.main-header {
+    background-color: var(--color-background);
+    border-bottom: 1px solid var(--color-border);
+    padding: 15px 0;
+    height: var(--header-height);
+}
+
+.main-header__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+}
+
+.main-header__logo img {
+    height: 50px;
+    /* Contrôle de la taille par la hauteur */
+    width: auto;
+}
+
+.main-header__nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 40px;
+}
+
+.main-header__nav a {
+    font-family: var(--font-title);
+    font-size: 1.25rem;
+    font-weight: 600;
+    padding-bottom: 5px;
+    color: var(--color-text-body);
+}
+
+.main-header__nav a.active,
+.main-header__nav a:hover {
+    border-bottom: 2px solid var(--color-primary);
+    text-decoration: none;
+}
+
+.main-header__icons {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+/* === BLOC CORRIGÉ === */
+/* Ce sélecteur cible maintenant les <img> ET les <svg> dans les liens du header */
+.main-header__icons a img,
+.main-header__icons a svg {
+    width: 28px;
+    height: 28px;
+    color: var(--color-text-body);
+    transition: transform 0.2s, color 0.2s;
+    object-fit: contain;
+}
+
+.main-header__icons a:hover img,
+.main-header__icons a:hover svg {
+    transform: scale(1.1);
+    color: var(--color-primary);
+}
+
+/* === FIN DU BLOC CORRIGÉ === */
+
+.main-header__cart-icon {
+    position: relative;
+}
+
+.main-header__cart-count {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background-color: var(--color-danger);
+    color: var(--color-text-inverted);
+    border-radius: 50%;
+    font-size: 0.7rem;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    border: 2px solid var(--color-background);
+}
+
+.avis-box {
+    background-color: #f5efe2;
+    border: 1px solid #e0d6be;
+    padding: 25px 20px;
+    width: 300px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+/* --- NOUVELLE RÈGLE POUR LES ÉTOILES DANS LES AVIS --- */
+/* --- RÈGLE CORRIGÉE POUR LES ÉTOILES DANS LES AVIS --- */
+.testimonial-card__rating {
+    /* On augmente l'espace en dessous pour donner de l'air aux étoiles */
+    margin-bottom: 20px;
+}
+
+.testimonial-card__rating img {
+    /* On augmente la hauteur pour qu'elles aient plus d'impact visuel */
+    height: 80px;
+    width: auto;
+    margin: 0 auto;
+    /* Centrage horizontal */
+}
+
+
+/* ==========================================================================
+   BANNIÈRE DE PAGE - CORRECTION FINALE ET AUTORITAIRE
+   ========================================================================== */
+.hero-section--narrow {
+    /* On démolit toutes les anciennes propriétés pour reconstruire. */
+    display: block !important; /* Ce n'est PAS un conteneur flex qui doit s'étirer. */
+    background-color: var(--color-background-accent) !important;
+    padding: 4rem 1.5rem !important; /* L'espacement est géré par le padding. Point. */
+    text-align: center !important;
+
+    /* LA SOLUTION FINALE. CES LIGNES ÉCRASENT TOUT AUTRE STYLE. */
+    height: auto !important;
+    min-height: auto !important;
+}
+
+/* Les styles pour le contenu interne restent valables. */
+.hero-section--narrow .hero-title {
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+}
+
+.hero-section--narrow .hero-subtitle {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    color: var(--color-text-body);
+}
+
+
+/* --- Footer --- */
+.main-footer {
+    background-color: var(--color-background-deep);
+    padding: 60px 0 30px 0;
+    color: var(--color-text-body);
+    font-size: 0.95rem;
+    margin-top: 80px;
+    line-height: 1.6;
+}
+
+.main-footer__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.main-footer__column h4 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    font-family: var(--font-title);
+    color: var(--color-text-heading);
+}
+
+.main-footer__column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.main-footer__column li {
+    margin-bottom: 10px;
+}
+
+.main-footer__column a {
+    color: var(--color-text-body);
+}
+
+.main-footer__socials {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.main-footer__socials img {
+    height: 40px;
+    /* Hauteur fixe et discrète */
+    width: 40px;
+    /* Largeur fixe et discrète */
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.main-footer__socials a:hover img {
+    opacity: 1;
+}
+
+.main-footer__copyright {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+/* --- Formulaire de Newsletter (dans le Footer) --- */
+.newsletter-form {
+    display: flex;
+    margin-top: 15px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+}
+
+.newsletter-form__input {
+    flex-grow: 1;
+    border: none;
+    padding: 12px 15px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    background-color: var(--color-background);
+}
+
+.newsletter-form__input:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--color-primary);
+}
+
+.newsletter-form__button {
+    border: none;
+    background-color: var(--color-primary);
+    color: var(--color-text-inverted);
+    padding: 0 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+.newsletter-form__button:hover {
+    background-color: #8c7150;
+}
+
+.newsletter-form__button svg {
+    width: 20px;
+    height: 20px;
+}
+
+
+/* ------------------------------------------------------------------
+   Bloc “Qui sommes-nous ?”
+   ------------------------------------------------------------------*/
+.team-wrapper {
+    display: flex;
+    gap: 60px;
+    /* espace entre les deux colonnes */
+    align-items: flex-start;
+    /* aligne le haut des colonnes */
+    margin-top: 40px;
+}
+
+/* --- Colonne image --- */
+.team-photo {
+    flex: 0 0 260px;
+    /* largeur fixe de 260 px */
+    margin: 0;
+    /* supprime la marge par défaut de <figure> */
+}
+
+.team-photo img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* --- Colonne textes --- */
+.team-info {
+    flex: 1 1 0;
+    /* prend tout l’espace restant */
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    /* espace vertical entre Phuong & Alberto */
+}
+
+.team-member h3 {
+    font-size: 1.4rem;
+    margin: 0 0 .25rem;
+}
+
+.team-member .role {
+    font-style: italic;
+    margin: 0 0 .5rem;
+}
+
+/* --- Responsive : on empile tout dès 750 px --- */
+@media(max-width:750px) {
+    .team-wrapper {
+        flex-direction: column;
+    }
+
+    .team-photo {
+        width: 100%;
+        max-width: 320px;
+        /* optionnel : limite la taille sur mobile */
+        margin: 0 auto;
+    }
+}
+
+
+
+/* Si tu veux qu’il soit encore plus fin en desktop : */
+@media (min-width: 992px) {
+    .hero-section--narrow {
+        height: 280px;
+        /* fixe sur grand écran, plus stable */
+    }
+}
+
+
+/* Responsive Adjustments for Homepage */
+@media (max-width: 992px) {
+    .story-section {
+        grid-template-columns: 1fr;
+    }
+
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .testimonial-card {
+        margin-bottom: 80px;
+    }
+
+    .testimonials-grid .testimonial-card:last-child {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero-content p {
+        font-size: 1.2rem;
+    }
+
+    .category-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===========================================================
+   PANIER : alignements
+   =========================================================== */
+
+/* a) Centre toutes les cellules (th & td) de la table du panier */
+.panier-table th,
+.panier-table td {
+    text-align: center !important;
+    vertical-align: middle;
+}
+
+/* b) Le bloc "mettre à jour" est déjà pushé à droite en flex,
+      on n'a rien à faire de plus (la classe .w-100 garantit
+      qu'il occupe toute la largeur disponible). */
+
+/* c) Centrer le texte dans la carte récapitulative */
+.card .card-title,
+.card .table td {
+    text-align: center;
+}
+
+/* ===========================================================
+   PANIER : ALIGNEMENT FINAL ET DÉFINITIF DU RÉCAPITULATIF
+   =========================================================== */
+
+/* On cible UNIQUEMENT la carte du récapitulatif grâce à notre nouvelle classe. */
+.recap-card .card-title {
+    text-align: center;
+    /* Le titre sera plus joli au centre. */
+    margin-bottom: 1.5rem;
+    /* On lui donne un peu d'air. */
+}
+
+.recap-card table {
+    width: 100%;
+}
+
+/* On cible la PREMIÈRE cellule de chaque ligne (les libellés : Total HT, Total TTC). */
+.recap-card table td:first-child {
+    text-align: left;
+    /* Les libellés à gauche. C'est la base. */
+}
+
+/* On cible la DERNIÈRE cellule de chaque ligne (les prix). */
+.recap-card table td:last-child {
+    text-align: right;
+    /* Les chiffres à droite. Comme sur n'importe quelle facture qui se respecte. */
+    font-weight: bold;
+    /* On met les prix en gras pour qu'ils ressortent. */
+}
+
+/* ===================================================
+   CORRECTIF POUR L'IMAGE HERO INVISIBLE
+   =================================================== */
+.hero-section {
+    position: relative;
+    /* Tu devrais déjà avoir ça, c'est essentiel. */
+    z-index: 0;
+    /* ÇA, C'EST LA LIGNE QUI RÈGLE TOUT. */
+}
+
+
+/* ===================================================
+   HÉROS : FILTRE DE LISIBILITÉ
+   =================================================== */
+
+.hero-section {
+    display: flex;
+    /* La base : on active le mode "colonnes" */
+    align-items: stretch;
+    /* Les deux colonnes auront la même hauteur */
+    min-height: 70vh;
+    /* Donne une hauteur minimale à la section */
+    background-color: var(--color-background-accent);
+    /* Fond crème pour la colonne de droite */
+}
+
+/* Colonne de gauche (image) */
+.hero-image-container {
+    flex: 1 1 55%;
+    /* L'image prend environ 55% de la largeur */
+    overflow: hidden;
+    /* Cache les parties de l'image qui dépassent */
+}
+
+.hero-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* L'image remplit son conteneur sans se déformer. C'est la clé. */
+}
+
+/* Colonne de droite (texte) */
+.hero-content {
+    flex: 1 1 45%;
+    /* Le texte prend le reste, 45% */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Centre le contenu verticalement */
+    padding: 4rem;
+    /* Ajoute de l'espace à l'intérieur */
+    text-align: left;
+    /* Texte aligné à gauche comme sur la maquette */
+}
+
+/* On remet le texte en couleur sombre */
+.hero-content h1,
+.hero-content p {
+    color: var(--color-text-heading);
+    /* Utilise ta variable de couleur de texte principale */
+    text-shadow: none;
+    /* Plus besoin d'ombre */
+}
+
+/* Ajustements pour les titres et paragraphes si besoin */
+.hero-content h1 {
+    font-size: 3.5rem;
+    /* Ajuste la taille si nécessaire */
+}
+
+.hero-content p {
+    font-size: 1.5rem;
+    max-width: 500px;
+    /* Limite la largeur du paragraphe pour un meilleur flow */
+}
+
+/* ===================================================
+   RESPONSIVE : POUR QUE ÇA NE SOIT PAS MOCHE SUR MOBILE
+   =================================================== */
+@media (max-width: 992px) {
+    .hero-section {
+        flex-direction: column;
+        /* On empile les colonnes l'une sur l'autre */
+    }
+
+    .hero-image-container {
+        min-height: 300px;
+        /* Donne une hauteur à l'image quand elle est seule en haut */
+    }
+
+    .hero-content {
+        padding: 2rem;
+        /* Moins d'espace sur mobile */
+        text-align: center;
+        /* Centre le texte sur mobile, c'est souvent mieux */
+    }
+}
+
+/* ==========================================================================
+   BOUTONS - REFAITS SELON TA CHARTE GRAPHIQUE
+   ========================================================================== */
+
+/* --- Le bouton principal (btn-primary) --- */
+/* Ex: "Ajouter une adresse" */
+.btn-primary {
+    background-color: var(--color-primary);
+    /* Ton brun principal */
+    color: var(--color-text-inverted);
+    /* Texte blanc */
+    border-color: var(--color-primary);
+}
+
+.btn-primary:hover {
+    background-color: #8c7150;
+    /* Un brun plus sombre, cohérent */
+    border-color: #8c7150;
+}
+
+
+/* --- Le bouton de succès (btn-success) --- */
+/* Pourrait être utile plus tard. On le met à tes couleurs. */
+.btn-success {
+    background-color: var(--color-secondary);
+    /* Ton vert */
+    color: var(--color-text-inverted);
+    border-color: var(--color-secondary);
+}
+
+.btn-success:hover {
+    background-color: #4a755e;
+    /* Un vert plus sombre */
+    border-color: #4a755e;
+}
+
+
+/* --- Le bouton d'avertissement (btn-warning) - POUR "MODIFIER" --- */
+/* Ton bouton "Modifier" est illisible, une abomination.
+   Il utilise la classe `btn-warning`. On va lui donner le style qu'il mérite. */
+.btn-warning {
+    background-color: var(--color-background-accent);
+    /* Fond beige */
+    color: var(--color-text-body);
+    /* Texte brun */
+    border-color: var(--color-border);
+}
+
+.btn-warning:hover {
+    background-color: var(--color-primary);
+    /* Devient le bouton principal au survol */
+    color: var(--color-text-inverted);
+    border-color: var(--color-primary);
+}
+
+
+/* --- Le bouton de danger (btn-danger) - POUR "SUPPRIMER" / "SE DÉCONNECTER" --- */
+/* Le rouge criard de Bootstrap est remplacé par TON rouge brique. */
+.btn-danger {
+    background-color: var(--color-danger);
+    color: var(--color-text-inverted);
+    border-color: var(--color-danger);
+}
+
+.btn-danger:hover {
+    background-color: #a93226;
+    /* Un rouge plus intense */
+    border-color: #a93226;
+}
+
+/* --- L'état désactivé (disabled) - IMPORTANT --- */
+.btn:disabled,
+.btn.disabled {
+    background-color: #f0ebe5;
+    color: var(--color-text-muted);
+    border-color: var(--color-border);
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+
+
+/
+/* =========  Slider Prix (catalogue)  ========= */
+
+.price-filter__label {
+    font-family: var(--font-title);
+    font-size: 1.4rem;
+    margin-bottom: .5rem;
+}
+
+.noUi-target {
+    background: #A38968;
+    border: none;
+    height: 4px;
+}
+
+.noUi-connect {
+    background: #A38968;
+}
+
+.noUi-horizontal .noUi-handle {
+    width: 20px;
+    height: 20px;
+    top: -8px;
+    border-radius: 50%;
+    background: #A38968;
+    border: none;
+    cursor: pointer;
+    box-shadow: none;
+}
+
+.price-filter__values {
+    font-family: 'Abhaya Libre', serif;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: center;
+    gap: .5rem;
+    margin-bottom: 1rem;
+}
+
+.btn-reset {
+    border: 1px solid #A38968;
+    border-radius: 15px;
+    background: transparent;
+    font-family: var(--font-title);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.btn-reset:hover {
+    background: #A38968;
+    color: #fff;
+}
+
+
+.noUi-handle {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: #A38968;
+    border: 2px solid white;
+    top: -5px;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Style général de la barre */
+.price-filter #price-slider {
+  background: #E5DDCE;
+  border-radius: 8px;
+  height: 6px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+/* Couleur de la plage active (entre les deux poignées) */
+.price-filter .noUi-connect {
+  background-color: #A38968;
+}
+
+/* Style des poignées */
+.price-filter .noUi-handle {
+  background-color: #A38968;
+  border: 2px solid #3E2F1C;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  top: -10px;
+  cursor: grab;
+}
+
+/* Supprimer les barres internes */
+.price-filter .noUi-handle::before,
+.price-filter .noUi-handle::after {
+  display: none;
+}
+
+
+/* ==========================================================================
+   PAGINATION - REFAITE POUR CORRESPONDRE À LA CHARTE GRAPHIQUE
+   ========================================================================== */
+
+/* 1. Conteneur principal : on s'assure que les éléments sont bien alignés */
+.pagination {
+    display: flex;
+    justify-content: center;
+    padding-left: 0;
+    list-style: none;
+    margin: 2rem 0; /* Un peu d'air autour */
+}
+
+/* 2. Le style de base pour chaque lien de page */
+.pagination .page-link {
+    position: relative;
+    display: block;
+    padding: 0.5rem 1rem;
+    margin-left: -1px; /* Colle les boutons les uns aux autres */
+    line-height: 1.25;
+
+    color: var(--color-primary); /* Texte en brun par défaut */
+    background-color: var(--color-background); /* Fond blanc */
+    border: 1px solid var(--color-border); /* Bordure beige */
+
+    font-family: var(--font-body);
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
+}
+.pagination .page-link:hover {
+    z-index: 2;
+    color: var(--color-text-inverted);
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+/* 3. Le style pour la page ACTIVE */
+.pagination .page-item.active .page-link {
+    z-index: 3;
+    color: var(--color-text-inverted); /* Texte blanc */
+    background-color: var(--color-primary); /* Fond brun */
+    border-color: var(--color-primary);
+}
+.pagination .page-item.active .page-link:hover {
+    /* Pas de changement de couleur au survol quand c'est déjà actif */
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+/* 4. Le style pour un lien désactivé (pas utilisé dans ton code, mais c'est une bonne pratique) */
+.pagination .page-item.disabled .page-link {
+    color: var(--color-text-muted);
+    pointer-events: none;
+    background-color: var(--color-background-accent);
+    border-color: var(--color-border);
+}
+
+/* 5. Gestion des coins arrondis pour le premier et le dernier élément */
+.pagination .page-item:first-child .page-link {
+    border-top-left-radius: var(--border-radius);
+    border-bottom-left-radius: var(--border-radius);
+}
+.pagination .page-item:last-child .page-link {
+    border-top-right-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+}
+
+/* ==========================================================================
+   FAQ - STYLE CONFORME À LA MAQUETTE (AVEC ESPACEMENT CORRIGÉ)
+   ========================================================================== */
+
+/* Conteneur principal de la FAQ */
+.faq-container-figma {
+    max-width: 980px; /* Un peu moins large pour plus d'élégance */
+    margin: 0 auto;
+}
+
+/* Titre principal de la page FAQ */
+.faq-container-figma + h1, .faq-container-figma ~ .lead {
+    text-align: center;
+}
+.faq-container-figma + h1 {
+    margin-bottom: 0.5rem;
+}
+.faq-container-figma ~ .lead {
+    margin-bottom: 3rem;
+}
+
+
+/* Le conteneur pour une section (ex: "Produits") */
+.faq-section {
+    /* La bordure est supprimée, la maquette n'en montre pas vraiment */
+    margin-bottom: 3rem; /* Espace GÉNÉREUX entre les sections */
+}
+
+/* Le titre d'une section (ex: "Produits", "Livraison") */
+.faq-section-title {
+    font-size: 2.5rem; /* 40px */
+    font-weight: 700;
+    margin-bottom: 1.5rem; /* Espace entre le titre de la section et la première question */
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-border); /* Un simple séparateur élégant */
+}
+
+/* Chaque item de l'accordéon (une question + sa réponse) */
+.accordion-item {
+    border-bottom: 1px solid var(--color-border);
+}
+.accordion-item:last-child {
+    border-bottom: none;
+}
+
+/* Le header cliquable contenant la question */
+.accordion-header {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 1.25rem 0.5rem; /* Espace vertical et un peu horizontal */
+    text-align: left;
+    font-family: var(--font-title);
+    font-size: 1.5rem; /* 24px, plus subtil que 30px */
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--color-text-heading);
+    transition: color 0.2s ease;
+}
+.accordion-header:hover {
+    color: var(--color-primary);
+}
+
+.accordion-icon {
+    font-family: sans-serif; /* Une police simple pour le '+' et '-' */
+    font-size: 1.75rem;
+    font-weight: 300;
+    color: var(--color-text-body);
+    transition: transform 0.3s ease;
+}
+
+/* Le conteneur de la réponse (caché par défaut) */
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+    color: var(--color-text-body);
+}
+
+/* Le bloc intérieur de la réponse (pour le style) */
+.accordion-content-inner {
+    background-color: transparent; /* Pas de fond beige, pour un look plus épuré */
+    padding: 0 0.5rem 1.5rem 0.5rem; /* Pas de padding haut, beaucoup en bas */
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+/* --- Styles pour l'état actif (ouvert) --- */
+.accordion-item.active .accordion-header {
+    color: var(--color-primary);
+}
+
+.accordion-item.active .accordion-icon {
+    transform: rotate(45deg); /* Une croix simple et élégante */
+}
+
+ /* CSS pour la grille de produits et le système d'étoiles. */
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+        justify-content: start;
+    }
+    .product-card {
+        border: 1px solid #dee2e6;
+        border-radius: .25rem;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        transition: box-shadow .2s ease-in-out;
+    }
+    .product-card:hover {
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+    }
+    .product-card-img-top {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+    }
+    .product-card-body {
+        padding: 1rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .product-title {
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+    .product-meta {
+        font-size: 0.9rem;
+        color: #6c757d;
+        min-height: 20px;
+    }
+    .product-price {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin: 0.5rem 0;
+    }
+    .product-card-body .btn {
+        margin-top: auto;
+    }
+    .rating-stars {
+        display: inline-block;
+        position: relative;
+        font-size: 1.1rem;
+        color: #d3d3d3;
+    }
+    .stars-foreground {
+        position: absolute;
+        top: 0;
+        left: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        color: #ffc107;
+    }
+
+    /* ======================================================== */
+    /* == NOUVEAU CODE CSS POUR CORRIGER LA TAILLE DE L'IMAGE == */
+    /* ======================================================== */
+    .product-detail-image-container img {
+        width: 100%; /* Prend toute la largeur de sa colonne */
+        max-height: 550px; /* Limite la hauteur maximale (ajustez si besoin) */
+        height: auto; /* Permet au navigateur de calculer la hauteur proportionnellement */
+        object-fit: contain; /* S'assure que l'image est entièrement visible et non déformée */}
