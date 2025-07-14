@@ -15,6 +15,10 @@ session_start();
 require('parametrage/param.php');
 require('fonction/fonctions.php');
 
+
+$activePage = 'boutique'; 
+
+
 // --- AIGUILLAGE PRINCIPAL ---
 // On détermine l'action à effectuer en fonction des paramètres GET 
 if (isset($_GET['a'])) {
@@ -28,7 +32,7 @@ if (isset($_GET['a'])) {
 }
 
 // --- INITIALISATION DES VARIABLES DE VUE ---
-$pageTitle = SITE_NAME; 
+$pageTitle = SITE_NAME;
 $produit = array();
 $avis = array();
 $livre_inclus = false;
@@ -61,7 +65,7 @@ if ($action == 'view') {
         if (isset($_SESSION['user']['id_client'])) {
             $id_produit_form = isset($_POST['id_produit']) ? (int) $_POST['id_produit'] : 0;
             $note = isset($_POST['note']) ? (int) $_POST['note'] : 0;
-            $commentaire = isset($_POST['commentaire']) ? purifier_trim($_POST['commentaire']) : '';
+            $commentaire = isset($_POST['commentaire']) ? trim($_POST['commentaire']) : '';
             if ($id_produit_form > 0 && $note > 0) {
                 rateProduct($_SESSION['user']['id_client'], $id_produit_form, $note, $commentaire);
             }
@@ -95,7 +99,7 @@ if ($action == 'view') {
     $pageTitle = isset($produit['nom_produit']) ? htmlspecialchars($produit['nom_produit']) : 'Détail Produit';
 
 } elseif ($action == 'list') {
-// --- LOGIQUE POUR LE CATALOGUE (vue filtrée) ---
+    // --- LOGIQUE POUR LE CATALOGUE (vue filtrée) ---
     $view_type = isset($_GET['view']) ? $_GET['view'] : 'livres';
     $allowed_views = array('livres', 'bougies', 'coffrets');
     if (!in_array($view_type, $allowed_views)) {
@@ -106,7 +110,7 @@ if ($action == 'view') {
 
     // On prépare le tableau des filtres en récupérant les données de l'URL.
 
-    $type_filter = purifier_rtrim($view_type, 's');
+    $type_filter = rtrim($view_type, 's');
     $filters = array(
         'type' => $type_filter,
         'page' => isset($_GET['page']) ? (int) $_GET['page'] : 1,
@@ -124,7 +128,13 @@ if ($action == 'view') {
 
     $produits = getFilteredProducts($filters);
     $totalProduits = countFilteredProducts($filters);
-    $totalPages = $filters['limit'] > 0 ? purifier_ceil($totalProduits / $filters['limit']) : 1;
+    $totalPages = $filters['limit'] > 0 ? ceil($totalProduits / $filters['limit']) : 1;
+
+    // --- Préparation des données pour le slider de prix ---
+    $bounds = $priceBounds;
+    $startMin = ($filters['prix_min'] !== '') ? (int) $filters['prix_min'] : $bounds['min'];
+    $startMax = ($filters['prix_max'] !== '') ? (int) $filters['prix_max'] : $bounds['max'];
+
 
     switch ($view_type) {
         case 'livres':
@@ -141,10 +151,10 @@ if ($action == 'view') {
             break;
     }
 
-} else { 
+} else {
     // --- LOGIQUE POUR LA VITRINE (action par défaut) ---
     $action = 'vitrine';
-    $pageTitle = "L'Atelier des Mots & Lumières";
+    $pageTitle = "Tous Nos Produits";
     $livres_showcase = getFilteredProducts(array('type' => 'livre', 'limit' => 4, 'sort' => 'nouveaute'));
     $bougies_showcase = getFilteredProducts(array('type' => 'bougie', 'limit' => 4, 'sort' => 'nouveaute'));
     $coffrets_showcase = getFilteredProducts(array('type' => 'coffret', 'limit' => 4, 'sort' => 'nouveaute'));
@@ -157,70 +167,12 @@ if ($action == 'view') {
 // =========================================================================
 require('partials/header.php');
 ?>
-<style>
-    .rating-stars {
-        display: inline-block;
-        position: relative;
-        font-size: 1.2rem;
-        line-height: 1;
-        color: #e9ecef;
-    }
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.css">
 
-    .rating-stars-large {
-        font-size: 1.8rem;
-    }
+<script defer src="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.js"></script>
 
-    .stars-background {
-        position: relative;
-        z-index: 1;
-    }
 
-    .stars-foreground {
-        position: absolute;
-        top: 0;
-        left: 0;
-        white-space: nowrap;
-        overflow: hidden;
-        color: #ffc107;
-        z-index: 2;
-    }
 
-    .product-detail-image-container img {
-        width: 100%;
-        max-height: 550px;
-        height: auto;
-        object-fit: contain;
-
-        .product-tags-container {
-            min-height: 52px;
-            /* Espace pour deux lignes de badges */
-            text-align: center;
-            margin-top: 0.75rem;
-            margin-bottom: 0.75rem;
-        }
-
-        /* Le style du "rectangle" / badge */
-        .product-tag-line {
-            display: inline-block;
-            /* <-- LA CLÉ : Permet au div d'avoir un fond et des dimensions */
-            background-color: #EFEBDF;
-            /* Fond beige de la maquette */
-            color: #343a40;
-            font-family: 'Abhaya Libre', serif;
-            font-size: 0.8em;
-            padding: 0.3em 0.8em;
-            /* Espace intérieur */
-            border-radius: 10px;
-            /* Bords arrondis */
-            margin: 3px 2px;
-            /* Espace entre les badges s'ils sont côte à côte ou l'un sur l'autre */
-            max-width: 90%;
-            /* Empêche le badge d'être trop large sur mobile */
-        }
-
-        /* --- FIN DE L'INSERTION --- */
-    }
-</style>
 <?php
 // On affiche la bonne section HTML en fonction de l'action déterminée par le contrôleur.
 if ($action == 'view') {
@@ -261,7 +213,8 @@ if ($action == 'view') {
                 <?php if ($produit['stock'] > 0) { ?>
                     <div class="alert alert-success">En stock (<?php echo htmlspecialchars($produit['stock']); ?> restant(s))
                     </div>
-                    <form action="panier.php" method="POST" class="mb-4 d-flex align-items-center">                        <input type="hidden" name="add_to_cart_token" value="<?php echo $_SESSION['add_to_cart_token']; ?>">
+                    <form action="panier.php" method="POST" class="mb-4 d-flex align-items-center"> <input type="hidden"
+                            name="add_to_cart_token" value="<?php echo $_SESSION['add_to_cart_token']; ?>">
 
                         <input type="hidden" name="action" value="add">
                         <input type="hidden" name="product_id" value="<?php echo $produit['id_produit']; ?>">
@@ -282,7 +235,7 @@ if ($action == 'view') {
                 <?php
                 if ($produit['type'] == 'livre') {
                     $description = isset($produit['resume']) ? $produit['resume'] : 'Résumé non disponible.';
-                    echo '<p>' . purifier_nl2br(htmlspecialchars($description)) . '</p>';
+                    echo '<p>' . nl2br(htmlspecialchars($description)) . '</p>';
                     echo '<h5>Détails</h5><ul class="list-group list-group-flush">';
                     echo '<li class="list-group-item"><strong>Éditeur :</strong> ' . htmlspecialchars(isset($produit['editeur']) ? $produit['editeur'] : 'N/A') . '</li>';
                     echo '<li class="list-group-item"><strong>Année :</strong> ' . htmlspecialchars(isset($produit['annee_publication']) ? $produit['annee_publication'] : 'N/A') . '</li>';
@@ -293,7 +246,7 @@ if ($action == 'view') {
                     echo '</ul>';
                 } elseif ($produit['type'] == 'bougie') {
                     $description = isset($produit['description_bougie']) ? $produit['description_bougie'] : 'Description non disponible.';
-                    echo '<p>' . purifier_nl2br(htmlspecialchars($description)) . '</p>';
+                    echo '<p>' . nl2br(htmlspecialchars($description)) . '</p>';
                     echo '<h5>Détails</h5><ul class="list-group list-group-flush">';
                     echo '<li class="list-group-item"><strong>Parfum :</strong> ' . htmlspecialchars(isset($produit['parfum']) ? $produit['parfum'] : 'N/A') . '</li>';
                     echo '<li class="list-group-item"><strong>Durée :</strong> ' . htmlspecialchars(isset($produit['duree_combustion']) ? $produit['duree_combustion'] : 'N/A') . ' heures</li>';
@@ -301,7 +254,7 @@ if ($action == 'view') {
                     echo '</ul>';
                 } elseif ($produit['type'] == 'coffret') {
                     $description = isset($produit['description_coffret']) ? $produit['description_coffret'] : 'Description non disponible.';
-                    echo '<p>' . purifier_nl2br(htmlspecialchars($description)) . '</p>';
+                    echo '<p>' . nl2br(htmlspecialchars($description)) . '</p>';
                     echo '<h5 class="mt-4">Contenu du coffret</h5><div class="list-group">';
                     if ($livre_inclus) {
                         echo '<a href="shop.php?a=view&id=' . $livre_inclus['id_produit'] . '" class="list-group-item list-group-item-action"><strong>Livre :</strong> ' . htmlspecialchars($livre_inclus['nom_produit']) . '</a>';
@@ -323,7 +276,7 @@ if ($action == 'view') {
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
                                     <strong><?php echo htmlspecialchars($un_avis['prenom_client']); ?></strong>
-                                    <small class="text-muted"><?php echo purifier_format_date($un_avis['date_notation']); ?></small>
+                                    <small class="text-muted"><?php echo format_date($un_avis['date_notation']); ?></small>
                                 </div>
                                 <div class="rating-stars my-2">
                                     <div class="stars-foreground" style="width: <?php echo ($un_avis['note'] / 5) * 100; ?>%;">★★★★★
@@ -331,7 +284,7 @@ if ($action == 'view') {
                                     <div class="stars-background">★★★★★</div>
                                 </div>
                                 <?php if (isset($un_avis['commentaire']) && $un_avis['commentaire'] != '') { ?>
-                                    <p class="fst-italic">"<?php echo purifier_nl2br(htmlspecialchars($un_avis['commentaire'])); ?>"</p>
+                                    <p class="fst-italic">"<?php echo nl2br(htmlspecialchars($un_avis['commentaire'])); ?>"</p>
                                 <?php } ?>
                             </div>
                         </div>
@@ -380,7 +333,7 @@ if ($action == 'view') {
 
     ?>
     <main class="container my-5">
-        <div class="text-center p-4 mb-5" style="background-color: #f8f9fa; border-radius: .25rem;">
+        <div class="text-center p-4 mb-5" style="background-color: #E5DDCE; border-radius: .25rem;">
             <h1><?php echo htmlspecialchars($pageTitle); ?></h1>
             <p class="lead">Filtrez et découvrez notre sélection.</p>
         </div>
@@ -443,19 +396,28 @@ if ($action == 'view') {
                                 break;
                         }
                         ?>
-                        <div class="mb-4">
-                            <h5>Prix</h5>
-                            <div class="d-flex align-items-center">
-                                <input type="number" name="prix_min" class="form-control" placeholder="Min" value="<?php if (isset($filters['prix_min']) && $filters['prix_min'] != '')
-                                    echo htmlspecialchars($filters['prix_min']); ?>">
-                                <span class="mx-2">-</span>
-                                <input type="number" name="prix_max" class="form-control" placeholder="Max" value="<?php if (isset($filters['prix_max']) && $filters['prix_max'] != '')
-                                    echo htmlspecialchars($filters['prix_max']); ?>">
+                        <!-- Filtre du prix -->
+                        <div class="mb-4 price-filter">
+                            <h5 class="price-filter__label">Prix</h5>
+
+                            <div id="price-slider"></div>
+
+                            <div class="price-filter__values">
+                                <span id="price-min">€ <?= $startMin ?></span>
+                                <span class="mx-1">-</span>
+                                <span id="price-max">€ <?= $startMax ?></span>
                             </div>
+
+                            <input type="hidden" id="input-price-min" name="prix_min" value="<?= $startMin ?>">
+                            <input type="hidden" id="input-price-max" name="prix_max" value="<?= $startMax ?>">
+
                         </div>
                         <button type="submit" class="btn btn-primary w-100 mt-3">Appliquer</button>
-                        <a href="shop.php?a=list&view=<?php echo htmlspecialchars($view_type); ?>"
-                            class="btn btn-link w-100 mt-2 text-decoration-none">Réinitialiser</a>
+                        <a href="shop.php?a=list&view=<?= htmlspecialchars($view_type) ?>" id="reset-price"
+                            class="btn w-100 mt-2"
+                            style="border: 1px solid #A38968; border-radius: 15px; font-family: 'Cormorant Garamond', serif; font-weight: 600; color: black; background-color: white; padding: 10px;">
+                            Réinitialiser les filtres
+                        </a>
                     </div>
                 </form>
             </div>
@@ -525,14 +487,14 @@ if ($action == 'view') {
                                                 if (isset($produit['parfum']) && $produit['parfum'] != '') {
                                                     $parfums_array = explode(',', $produit['parfum']);
                                                     foreach ($parfums_array as $parfum) {
-                                                        $parfum_nettoye = purifier_trim($parfum);
+                                                        $parfum_nettoye = trim($parfum);
                                                         if ($parfum_nettoye != '') {
                                                             $parfums_propres[] = htmlspecialchars($parfum_nettoye);
                                                         }
                                                     }
                                                 }
                                                 if (count($parfums_propres) > 0) {
-                                                    echo '<div class="product-tag-line">' . purifier_implode(' / ', $parfums_propres) . '</div>';
+                                                    echo '<div class="product-tag-line">' . implode(' / ', $parfums_propres) . '</div>';
                                                 }
 
                                                 // GROUPE 2 : LES AMBIANCES
@@ -540,14 +502,14 @@ if ($action == 'view') {
                                                 if (isset($produit['ambiances_tags']) && $produit['ambiances_tags'] != '') {
                                                     $ambiances_array = explode(',', $produit['ambiances_tags']);
                                                     foreach ($ambiances_array as $ambiance) {
-                                                        $ambiance_nettoyee = purifier_trim($ambiance);
+                                                        $ambiance_nettoyee = trim($ambiance);
                                                         if ($ambiance_nettoyee != '') {
                                                             $ambiances_propres[] = htmlspecialchars($ambiance_nettoyee);
                                                         }
                                                     }
                                                 }
                                                 if (count($ambiances_propres) > 0) {
-                                                    echo '<div class="product-tag-line">' . purifier_implode(' / ', $ambiances_propres) . '</div>';
+                                                    echo '<div class="product-tag-line">' . implode(' / ', $ambiances_propres) . '</div>';
                                                 }
                                             }
                                             ?>
@@ -601,7 +563,7 @@ if ($action == 'view') {
                                 } ?>">
                                     <a class="page-link" href="?<?php $params = $_GET;
                                     $params['page'] = $i;
-                                    echo purifier_http_build_query($params); ?>"><?php echo $i; ?></a>
+                                    echo http_build_query($params); ?>"><?php echo $i; ?></a>
                                 </li>
                             <?php } ?>
                         </ul>
@@ -610,118 +572,182 @@ if ($action == 'view') {
 
             </div>
     </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            /* --- Bornes & valeurs de départ (injectées par PHP) --- */
+            const bounds = { min: <?= $priceBounds['min'] ?>, max: <?= $priceBounds['max'] ?> };
+            const start = [<?= $startMin ?>, <?= $startMax ?>];
+
+            /* --- Instances DOM --- */
+            const slider = document.getElementById('price-slider');
+            const spanMin = document.getElementById('price-min');
+            const spanMax = document.getElementById('price-max');
+            const inputMin = document.getElementById('input-price-min');
+            const inputMax = document.getElementById('input-price-max');
+
+            /* --- Creation du slider --- */
+            noUiSlider.create(slider, {
+                start: start,
+                connect: true,
+                step: 1,
+                range: bounds,
+                tooltips: false
+            });
+
+            /* --- Sync slider → affichage + champs cachés --- */
+            slider.noUiSlider.on('update', values => {
+                const vMin = Math.round(values[0]);
+                const vMax = Math.round(values[1]);
+                spanMin.textContent = '€ ' + vMin;
+                spanMax.textContent = '€ ' + vMax;
+                inputMin.value = vMin;
+                inputMax.value = vMax;
+            });
+
+            /* --- Bouton « Réinitialiser » --- */
+            document.getElementById('reset-price').addEventListener('click', () => {
+                slider.noUiSlider.set([bounds.min, bounds.max]);
+            });
+
+        });
+    </script>
     <?php
-} else { 
+} else {
     // Vue de la Vitrine
     ?>
     <main class="container-fluid p-0">
-        <section class="text-center p-4" style="background-color: #f8f9fa;">
-            <div class="container">
-                <h1 class="display-5"><?php echo htmlspecialchars($pageTitle); ?></h1>
-                <p class="lead text-muted">Explorez notre collection de livres, bougies et coffrets uniques.</p>
-            </div>
-        </section>
-        <section class="py-5">
-            <div class="container">
-                <h2 class="text-center mb-4">Nos Nouveaux Livres</h2>
-                <div class="row">
-                    <?php if (count($livres_showcase) > 0) {
-                        foreach ($livres_showcase as $produit) { ?>
-                            <div class="col-md-3 mb-4">
-                                <div class="card h-100 text-center"><a
-                                        href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>"
-                                        class="text-decoration-none text-dark d-block p-3"><img
-                                            src="<?php echo htmlspecialchars($produit['image_url']); ?>"
-                                            alt="<?php echo htmlspecialchars($produit['nom_produit']); ?>" class="card-img-top"
-                                            style="height: 250px; object-fit: contain;"></a>
-                                    <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title" style="min-height: 3em;"><a
-                                                href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>"
-                                                class="text-decoration-none text-dark"><?php echo htmlspecialchars($produit['nom_produit']); ?></a>
-                                        </h5>
-                                        <div class="mt-auto">
-                                            <p class="card-text h5"><?php echo number_format($produit['prix_ttc'], 2, ',', ' '); ?>
-                                                €</p><a href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>"
-                                                class="btn btn-sm btn-outline-secondary mt-2">Voir le détail</a>
-                                        </div>
-                                    </div>
+        <div class="shop-header">
+            <h1 class="shop-header__title">Tous Nos Produits</h1>
+            <p class="shop-header__subtitle">Explorez notre collection de livres, bougies et coffrets pour des moments de
+                lecture uniques et apaisants.</p>
+        </div>
+        <br/>
+
+        <!-- Section Livres -->
+        <section class="shop-section container">
+            <h2 class="shop-section__title">Nos Nouveaux Livres</h2>
+            <div class="product-grid-vitrine">
+                <?php if (count($livres_showcase) > 0) {
+                    foreach ($livres_showcase as $produit) { ?>
+                        <div class="product-card">
+                            <a href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>" class="product-card__image-link">
+                                <img class="product-card__image"
+                                    src="<?php echo htmlspecialchars(isset($produit['image_url']) && $produit['image_url'] != '' ? $produit['image_url'] : 'ressources/images/placeholder.jpg'); ?>"
+                                    alt="<?php echo htmlspecialchars($produit['nom_produit']); ?>">
+                            </a>
+                            <div class="product-card__content">
+                                <h3 class="product-card__title">
+                                    <a
+                                        href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>"><?php echo htmlspecialchars($produit['nom_produit']); ?></a>
+                                </h3>
+                                <p class="product-card__price"><?php echo number_format($produit['prix_ttc'], 2, ',', ' '); ?> €</p>
+                                <div class="product-card__actions">
+                                    <a href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>"
+                                        class="btn btn--secondary">Voir le détail</a>
                                 </div>
                             </div>
-                        <?php }
-                    } ?>
-                </div>
-                <div class="text-center mt-4"><a href="shop.php?a=list&view=livres" class="btn btn-outline-secondary">Voir
-                        tous nos livres</a></div>
+                        </div>
+                    <?php }
+                } ?>
+            </div>
+            <br />
+            <div class="shop-section__cta">
+                <a href="shop.php?a=list&view=livres" class="btn btn--primary cta-large"> Voir tous nos livres</a>
             </div>
         </section>
-        <section class="py-5" style="background-color: #f8f9fa;">
-            <div class="container">
-                <h2 class="text-center mb-4">Nos Bougies Artisanales</h2>
-                <div class="row">
-                    <?php if (count($bougies_showcase) > 0) {
-                        foreach ($bougies_showcase as $produit) { ?>
-                            <div class="col-md-3 mb-4">
-                                <div class="card h-100 text-center"><a
-                                        href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>"
-                                        class="text-decoration-none text-dark d-block p-3"><img
-                                            src="<?php echo htmlspecialchars($produit['image_url']); ?>"
-                                            alt="<?php echo htmlspecialchars($produit['nom_produit']); ?>" class="card-img-top"
-                                            style="height: 250px; object-fit: contain;"></a>
-                                    <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title" style="min-height: 3em;"><a
-                                                href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>"
-                                                class="text-decoration-none text-dark"><?php echo htmlspecialchars($produit['nom_produit']); ?></a>
-                                        </h5>
-                                        <div class="mt-auto">
-                                            <p class="card-text h5"><?php echo number_format($produit['prix_ttc'], 2, ',', ' '); ?>
-                                                €</p><a href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>"
-                                                class="btn btn-sm btn-outline-secondary mt-2">Voir le détail</a>
-                                        </div>
-                                    </div>
+        <br/>
+
+        <!-- Section Bougies -->
+        <section class="shop-section container">
+            <h2 class="shop-section__title">Nos Bougies Artisanales</h2>
+            <div class="product-grid-vitrine">
+                <?php if (count($bougies_showcase) > 0) {
+                    foreach ($bougies_showcase as $produit) { ?>
+                        <div class="product-card">
+                            <a href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>" class="product-card__image-link">
+                                <img class="product-card__image"
+                                    src="<?php echo htmlspecialchars(isset($produit['image_url']) && $produit['image_url'] != '' ? $produit['image_url'] : 'ressources/images/placeholder.jpg'); ?>"
+                                    alt="<?php echo htmlspecialchars($produit['nom_produit']); ?>">
+                            </a>
+                            <div class="product-card__content">
+                                <h3 class="product-card__title">
+                                    <a
+                                        href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>"><?php echo htmlspecialchars($produit['nom_produit']); ?></a>
+                                </h3>
+                                <p class="product-card__price"><?php echo number_format($produit['prix_ttc'], 2, ',', ' '); ?> €</p>
+                                <div class="product-card__actions">
+                                    <a href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>"
+                                        class="btn btn--secondary">Voir le détail</a>
                                 </div>
                             </div>
-                        <?php }
-                    } ?>
-                </div>
-                <div class="text-center mt-4"><a href="shop.php?a=list&view=bougies" class="btn btn-outline-secondary">Voir
-                        toutes nos bougies</a></div>
+                        </div>
+                    <?php }
+                } ?>
+            </div>
+            <br />
+            <div class="shop-section__cta">
+                <a href="shop.php?a=list&view=bougies" class="btn btn--primary cta-large"> Voir toutes nos bougies</a>
             </div>
         </section>
-        <section class="py-5">
-            <div class="container">
-                <h2 class="text-center mb-4">Nos Coffrets Uniques</h2>
-                <div class="row">
-                    <?php if (count($coffrets_showcase) > 0) {
-                        foreach ($coffrets_showcase as $produit) { ?>
-                            <div class="col-md-3 mb-4">
-                                <div class="card h-100 text-center"><a
-                                        href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>"
-                                        class="text-decoration-none text-dark d-block p-3"><img
-                                            src="<?php echo htmlspecialchars($produit['image_url']); ?>"
-                                            alt="<?php echo htmlspecialchars($produit['nom_produit']); ?>" class="card-img-top"
-                                            style="height: 250px; object-fit: contain;"></a>
-                                    <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title" style="min-height: 3em;"><a
-                                                href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>"
-                                                class="text-decoration-none text-dark"><?php echo htmlspecialchars($produit['nom_produit']); ?></a>
-                                        </h5>
-                                        <div class="mt-auto">
-                                            <p class="card-text h5"><?php echo number_format($produit['prix_ttc'], 2, ',', ' '); ?>
-                                                €</p><a href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>"
-                                                class="btn btn-sm btn-outline-secondary mt-2">Voir le détail</a>
-                                        </div>
-                                    </div>
+        <br/>
+
+        <!-- Section Coffrets -->
+        <section class="shop-section container">
+            <h2 class="shop-section__title">Nos Coffrets Uniques</h2>
+            <div class="product-grid-vitrine">
+                <?php if (count($coffrets_showcase) > 0) {
+                    foreach ($coffrets_showcase as $produit) { ?>
+                        <div class="product-card">
+                            <a href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>" class="product-card__image-link">
+                                <img class="product-card__image"
+                                    src="<?php echo htmlspecialchars(isset($produit['image_url']) && $produit['image_url'] != '' ? $produit['image_url'] : 'ressources/images/placeholder.jpg'); ?>"
+                                    alt="<?php echo htmlspecialchars($produit['nom_produit']); ?>">
+                            </a>
+                            <div class="product-card__content">
+                                <h3 class="product-card__title">
+                                    <a
+                                        href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>"><?php echo htmlspecialchars($produit['nom_produit']); ?></a>
+                                </h3>
+                                <p class="product-card__price"><?php echo number_format($produit['prix_ttc'], 2, ',', ' '); ?> €</p>
+                                <div class="product-card__actions">
+                                    <a href="shop.php?a=view&id=<?php echo $produit['id_produit']; ?>"
+                                        class="btn btn--secondary">Voir le détail</a>
                                 </div>
                             </div>
-                        <?php }
-                    } ?>
-                </div>
-                <div class="text-center mt-4"><a href="shop.php?a=list&view=coffrets" class="btn btn-outline-secondary">Voir
-                        tous nos coffrets</a></div>
+                        </div>
+                    <?php }
+                } ?>
+            </div>
+            <br />
+            <div class="shop-section__cta">
+                <a href="shop.php?a=list&view=coffrets" class="btn btn--primary cta-large">Voir tous nos coffrets</a>
             </div>
         </section>
-    </main>
-    <?php
+        <!-- =================================================================== -->
+        <!--                      BANDE 3 AVANTAGES                               -->
+        <!-- =================================================================== -->
+        <section class="footer-benefits">
+            <div class="benefit">
+                <img src="ressources/decor/icon_livraison.png" alt="Livraison gratuite">
+                <h5>Livraison gratuite</h5>
+                <p>Livraison gratuite selon le montant et votre localisation.</p>
+            </div>
+
+            <div class="benefit">
+                <img src="ressources/decor/icon_paiement.png" alt="Paiement sécurisé">
+                <h5>Paiement sécurisé</h5>
+                <p>Notre système de paiement est rapide et facile à utiliser.</p>
+            </div>
+
+            <div class="benefit">
+                <img src="ressources/decor/icon_contact.png" alt="Contactez-nous">
+                <h5>Contactez-nous</h5>
+                <p>Vous avez des questions ? Contactez-nous.</p>
+            </div>
+        </section>
+
+        <?php
 }
 require('partials/footer.php');
 ?>

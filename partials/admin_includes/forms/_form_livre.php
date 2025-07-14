@@ -1,9 +1,8 @@
 <?php
-/*
- * Fichier partiel : _form_livre.php
- * Rôle : Affiche les champs de formulaire spécifiques à un livre.
- * Conformité : Utilise uniquement des balises et variables orthodoxes.
- */
+// _form_livre.php : Champs pour un formulaire de livre.
+
+
+$etats_possibles = array('Neuf', 'Très bon état', 'Bon état', 'État correct');
 ?>
 <fieldset class="border p-3 mb-3">
     <legend class="w-auto px-2 fs-5">Détails du Livre</legend>
@@ -20,7 +19,6 @@
             <label class="form-label">État</label>
             <select name="etat" class="form-select">
                 <?php
-                $etats_possibles = array('Neuf', 'Très bon état', 'Bon état', 'État correct');
                 foreach ($etats_possibles as $e) {
                     $selected = (isset($produit['etat']) && $produit['etat'] == $e) ? 'selected' : '';
                     echo '<option value="' . $e . '" ' . $selected . '>' . $e . '</option>';
@@ -47,30 +45,30 @@
         <label class="form-label">Éditeur</label>
         <select name="id_editeur" class="form-select">
             <option value="">-- Aucun --</option>
-            <?php foreach ($editeurs as $editeur): ?>
+            <?php foreach ($editeurs as $editeur) { ?>
                 <option value="<?php echo $editeur['id_editeur']; ?>" <?php echo (isset($produit['id_editeur']) && $produit['id_editeur'] == $editeur['id_editeur']) ? 'selected' : ''; ?>>
                     <?php echo htmlspecialchars($editeur['nom']); ?>
                 </option>
-            <?php endforeach; ?>
+            <?php } ?>
         </select>
     </div>
     <div class="mb-3">
         <label class="form-label">Auteurs</label>
         <select name="auteurs[]" class="form-select" multiple size="5">
-            <?php foreach ($auteurs as $auteur): ?>
+            <?php foreach ($auteurs as $auteur) { ?>
                 <option value="<?php echo $auteur['id_auteur']; ?>" <?php echo (isset($produit['auteurs_ids']) && in_array($auteur['id_auteur'], $produit['auteurs_ids'])) ? 'selected' : ''; ?>>
                     <?php echo htmlspecialchars($auteur['nom_complet']); ?>
                 </option>
-            <?php endforeach; ?>
+            <?php } ?>
         </select>
         <small class="form-text text-muted">Maintenez CTRL (ou CMD sur Mac) pour sélectionner plusieurs auteurs.</small>
     </div>
 </fieldset>
+
 <fieldset class="border p-3 mb-3">
     <legend class="w-auto px-2 fs-5">Genres Littéraires</legend>
     <div class="row">
         <?php
-        // La variable $genres est fournie par le script principal admin.php
         foreach ($genres as $genre) {
             $est_coche = (isset($produit['genres_ids']) && in_array($genre['id_genre'], $produit['genres_ids']));
         ?>
@@ -92,11 +90,11 @@
         ?>
     </div>
 </fieldset>
+
 <fieldset class="border p-3 mb-3">
     <legend class="w-auto px-2 fs-5">Ambiance </legend>
     <div class="row">
         <?php
-        // La variable $tags est fournie par le script principal admin.php
         foreach ($tags as $tag) {
             $est_coche = (isset($produit['tags']) && in_array($tag['id_tag'], $produit['tags']));
         ?>

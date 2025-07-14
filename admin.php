@@ -19,6 +19,7 @@ require('parametrage/param.php');
 require('fonction/fonctions.php');
 
 
+
 // --- GESTION DE LA DÉCONNEXION ---
 // Si l'URL contient "?action=logout", on gère la déconnexion en priorité.
 
@@ -341,7 +342,7 @@ switch ($page) {
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="admin.php?p=dashboard">Admin - L'Atelier</a>
+            <a class="navbar-brand" href="admin.php?p=dashboard">Admin - Les Pages Parfumées</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -524,7 +525,7 @@ switch ($page) {
                                         value="<?php echo htmlspecialchars(isset($produit['tva_rate']) ? $produit['tva_rate'] : $tva_defaut); ?>"
                                         required></div>
                                 <div class="col-md-4 mb-3"><label class="form-label">Stock<span
-                                            class="required-star">*</span></label><input type="text" class="form-control"
+                                            class="required-star" required>*</span></label><input type="text" class="form-control"
                                         name="stock"
                                         value="<?php echo htmlspecialchars(isset($produit['stock']) ? $produit['stock'] : '0'); ?>"
                                         required></div>
@@ -544,11 +545,11 @@ switch ($page) {
                         <?php
                         $type_a_afficher = $mode_edition ? $produit['type'] : $type_produit_demande;
                         if ($type_a_afficher == 'livre') {
-                            include 'admin_includes/forms/_form_livre.php';
+                            include 'partials/admin_includes/forms/_form_livre.php';
                         } elseif ($type_a_afficher == 'bougie') {
-                            include 'admin_includes/forms/_form_bougie.php';
+                            include 'partials/admin_includes/forms/_form_bougie.php';
                         } elseif ($type_a_afficher == 'coffret') {
-                            include 'admin_includes/forms/_form_coffret.php';
+                            include 'partials/admin_includes/forms/_form_coffret.php';
                         }
                         ?>
                         <button type="submit" class="btn btn-primary btn-lg">Sauvegarder le Produit</button>

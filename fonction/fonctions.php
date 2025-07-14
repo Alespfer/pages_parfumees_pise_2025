@@ -480,13 +480,13 @@ function getFilteredProducts(array $f): array
     $offset = ((int) $f['page'] - 1) * $limit;
 
     /* ---------------------------- Assemblage ---------------------------- */
-    $sql = $select . ' ' . $from . ' ' . purifier_implode(' ', $join);
+    $sql = $select . ' ' . $from . ' ' . implode(' ', $join);
     if ($w) {
-        $sql .= ' WHERE ' . purifier_implode(' AND ', $w);
+        $sql .= ' WHERE ' . implode(' AND ', $w);
     }
     $sql .= ' GROUP BY p.id_produit'; // Groupement final
     if ($h) {
-        $sql .= ' HAVING ' . purifier_implode(' AND ', $h);
+        $sql .= ' HAVING ' . implode(' AND ', $h);
     }
     $sql .= ' ' . $order . " LIMIT $limit OFFSET $offset";
 
@@ -584,9 +584,9 @@ function getFilteredProducts(array $f): array
 
     // Construction finale de la requête SQL
 
-    $sql = 'SELECT COUNT(DISTINCT p.id_produit) FROM produit p ' . purifier_implode(' ', $join);
+    $sql = 'SELECT COUNT(DISTINCT p.id_produit) FROM produit p ' . implode(' ', $join);
     if ($w) {
-        $sql .= ' WHERE ' . purifier_implode(' AND ', $w);
+        $sql .= ' WHERE ' . implode(' AND ', $w);
     }
 
     $stmt = $pdo->prepare($sql);
@@ -673,7 +673,7 @@ function createReturnRequest(int $clientId, int $commandeId, array $data): bool
         // Étape 2.A : Insertion de l’en-tête de demande.
         $msg = '';
         if (isset($data['message_global'])) {
-            $msg = purifier_trim($data['message_global']);
+            $msg = trim($data['message_global']);
         }
 
         $stmtDemande = $pdo->prepare(
@@ -1060,7 +1060,6 @@ function createOrderAndPayment(
             $stmtDet->execute([$idCmd, $idProd, $qte, $ht, $tva, $ttc, $ttc - $ht]);
             
             // --- DÉCRÉMENTATION DU STOCK (LOGIQUE CENTRALISÉE) ---
-            // On décrémente le stock du produit principal (livre, bougie, ou coffret).
             $stmtStock->execute([$qte, $idProd]);
 
             // --- GESTION SPÉCIFIQUE DES COFFRETS ---
@@ -1230,7 +1229,7 @@ function getReturnRequestDetailsForUser(int $returnId, int $clientId): ?array
 function getOrderStatusBadgeClass(string $status): string
 {
     // On met en minuscule pour éviter les problèmes de casse (ex: "Livrée" vs "livrée")
-    switch (strtolower(purifier_trim($status))) {
+    switch (strtolower(trim($status))) {
         case 'livrée':
         case 'payée':
         case 'terminée':
@@ -1796,146 +1795,8 @@ function getReturnDetails($id_demande)
 }
 
 
-
 // =========================================================================
-// SECTION 8 : Fonctions de purification
-// =========================================================================
-
-/**
- * Supprime les espaces en début et fin de chaîne.
- * @param string $chaine La chaîne à nettoyer.
- * @return string La chaîne nettoyée.
- */
-function purifier_trim($chaine)
-{
-    if (!is_string($chaine)) {
-        return $chaine;
-    }
-    while (strlen($chaine) > 0 && substr($chaine, 0, 1) == ' ') {
-        $chaine = substr($chaine, 1);
-    }
-    while (strlen($chaine) > 0 && substr($chaine, -1, 1) == ' ') {
-        $chaine = substr($chaine, 0, -1);
-    }
-    return $chaine;
-}
-
-/**
- * Concatène les éléments d’un tableau avec un séparateur
- * @param string $separateur Le séparateur à insérer entre les éléments.
- * @param array  $tableau Le tableau dont les éléments doivent être joints.
- * @return string La chaîne de caractères résultante.
- */
-function purifier_implode($separateur, $tableau)
-{
-    $chaine_resultat = '';
-    $premier_element = true;
-
-    foreach ($tableau as $element) {
-        if ($premier_element == true) {
-            // Pour le premier élément, on l'assigne directement sans séparateur.
-            $chaine_resultat = $element;
-            $premier_element = false;
-        } else {
-            // Pour tous les éléments suivants, on préfixe le séparateur.
-            $chaine_resultat = $chaine_resultat . $separateur . $element;
-        }
-    }
-
-    return $chaine_resultat;
-}
-
-
-/**
- * Arrondit un nombre à l’entier supérieur
- * @param float $nombre Le nombre à arrondir à l'entier supérieur.
- * @return int L'entier supérieur.
- */
-function purifier_ceil($nombre)
-{
-    $partie_entiere = (int) $nombre;
-    if ($partie_entiere == $nombre) {
-        return $partie_entiere;
-    }
-    return $partie_entiere + 1;
-}
-
-/**
- * Remplace « \n » par « <br />\n » pour afficher les retours à la ligne en HTML.
- * @param string $chaine La chaîne à traiter.
- * @return string La chaîne formatée.
- */
-function purifier_nl2br($chaine)
-{
-    return str_replace("\n", "<br />\n", $chaine);
-}
-
-/**
- * Transforme une date SQL 'YYYY-MM-DD HH:MM:SS' en format français 'DD/MM/YYYY'.
- * @param string $date_mysql La date au format BDD.
- * @return string La date au format français.
- */
-function purifier_format_date($date_mysql)
-{
-    if (strlen($date_mysql) >= 10) {
-        $annee = substr($date_mysql, 0, 4);
-        $mois = substr($date_mysql, 5, 2);
-        $jour = substr($date_mysql, 8, 2);
-        return $jour . '/' . $mois . '/' . $annee;
-    }
-    return ''; // Retourne une chaîne vide si le format est incorrect.
-}
-
-/**
- * Simule la fonction http_build_query() pour construire une chaîne de paramètres URL.
- * Utilise une boucle et une concaténation.
- * @param array $params Le tableau de paramètres.
- * @return string La chaîne de requête URL.
- */
-function purifier_http_build_query($params)
-{
-    $chaine_resultat = '';
-    $premier_param = true;
-
-    foreach ($params as $cle => $valeur) {
-        // La fonction is_array() est une primitive de base du langage.
-        if (is_array($valeur)) {
-            foreach ($valeur as $sous_valeur) {
-                if (!$premier_param) {
-                    $chaine_resultat = $chaine_resultat . '&';
-                }
-                // La fonction htmlspecialchars() est enseignée pour la sécurité (p.74).
-                $chaine_resultat = $chaine_resultat . htmlspecialchars($cle) . '[]=' . htmlspecialchars($sous_valeur);
-                $premier_param = false;
-            }
-        } else {
-            if (!$premier_param) {
-                $chaine_resultat = $chaine_resultat . '&';
-            }
-            $chaine_resultat = $chaine_resultat . htmlspecialchars($cle) . '=' . htmlspecialchars($valeur);
-            $premier_param = false;
-        }
-    }
-    return $chaine_resultat;
-}
-
-
-/**
- * Retire un caractère précis en fin de chaîne si celui-ci est présent.
- */
-function purifier_rtrim($chaine, $caractere)
-{
-
-    if (substr($chaine, -1) == $caractere) {
-        return substr($chaine, 0, -1);
-    }
-    return $chaine;
-}
-
-
-
-// =========================================================================
-// SECTION 9 : Tables de référence (Auteurs, Tags, Editeurs)
+// SECTION 8 : Tables de référence (Auteurs, Tags, Editeurs)
 // =========================================================================
 
 
@@ -1963,8 +1824,8 @@ function getAuteurById($id)
  */
 function createAuteur($data)
 {
-    $nom = isset($data['nom']) ? purifier_trim($data['nom']) : '';
-    $prenom = isset($data['prenom']) ? purifier_trim($data['prenom']) : '';
+    $nom = isset($data['nom']) ? trim($data['nom']) : '';
+    $prenom = isset($data['prenom']) ? trim($data['prenom']) : '';
     if ($nom == '' || $prenom == '')
         return false;
     $sql = 'INSERT INTO auteur (nom, prenom) VALUES (?, ?)';
@@ -1978,8 +1839,8 @@ function createAuteur($data)
 function updateAuteur($data)
 {
     $id_auteur = isset($data['id_auteur']) ? (int) $data['id_auteur'] : 0;
-    $nom = isset($data['nom']) ? purifier_trim($data['nom']) : '';
-    $prenom = isset($data['prenom']) ? purifier_trim($data['prenom']) : '';
+    $nom = isset($data['nom']) ? trim($data['nom']) : '';
+    $prenom = isset($data['prenom']) ? trim($data['prenom']) : '';
     if ($id_auteur == 0 || $nom == '' || $prenom == '')
         return false;
     $sql = 'UPDATE auteur SET nom = ?, prenom = ? WHERE id_auteur = ?';
@@ -2035,7 +1896,7 @@ function getTagById($id)
  */
 function createTag($data)
 {
-    $nom_tag = isset($data['nom_tag']) ? purifier_trim($data['nom_tag']) : '';
+    $nom_tag = isset($data['nom_tag']) ? trim($data['nom_tag']) : '';
     if ($nom_tag == '')
         return false;
     return getPDO()->prepare('INSERT INTO tag (nom_tag) VALUES (?)')->execute(array($nom_tag));
@@ -2049,7 +1910,7 @@ function updateTag($data)
 
     // 1) Validation et nettoyage des entrées 
     $id_tag = isset($data['id_tag']) ? (int) $data['id_tag'] : 0;
-    $nom_tag = isset($data['nom_tag']) ? purifier_trim($data['nom_tag']) : '';
+    $nom_tag = isset($data['nom_tag']) ? trim($data['nom_tag']) : '';
 
     if ($id_tag == 0 || $nom_tag == '')
         return false;
@@ -2114,7 +1975,7 @@ function getEditeurById($id)
  */
 function createEditeur($data)
 {
-    $nom = isset($data['nom']) ? purifier_trim($data['nom']) : '';
+    $nom = isset($data['nom']) ? trim($data['nom']) : '';
     if ($nom == '')
         return false;
     return getPDO()->prepare('INSERT INTO editeur (nom) VALUES (?)')->execute(array($nom));
@@ -2127,7 +1988,7 @@ function createEditeur($data)
 function updateEditeur($data)
 {
     $id_editeur = isset($data['id_editeur']) ? (int) $data['id_editeur'] : 0;
-    $nom = isset($data['nom']) ? purifier_trim($data['nom']) : '';
+    $nom = isset($data['nom']) ? trim($data['nom']) : '';
     if ($id_editeur == 0 || $nom == '')
         return false;
     $sql = 'UPDATE editeur SET nom = ? WHERE id_editeur = ?';
@@ -2158,7 +2019,7 @@ function deleteEditeur($id)
 
 
 // =========================================================================
-// SECTION 10 : FONCTIONS DE CRÉATION/MISE À JOUR PRODUIT
+// SECTION 9 : FONCTIONS DE CRÉATION/MISE À JOUR PRODUIT
 // =========================================================================
 
 
@@ -2288,6 +2149,7 @@ function updateProduct($data)
        ------------------------------------------------------------------ */
     $pdo = getPDO();
     setAuditAdminId($pdo);  // Stocke l’ID admin dans une variable SQL
+
     /* Sécurité : on vérifie qu’un id_produit valide est fourni. */
 
     $id_produit = isset($data['id_produit']) ? (int) $data['id_produit'] : 0;
@@ -2298,8 +2160,7 @@ function updateProduct($data)
     try {
         /* ================================================================
          * 2) DÉBUT TRANSACTION
-         *    Toute la mise à jour est atomique : si une étape échoue,
-         *    on revert la base pour qu’elle reste cohérente.
+         *    Si une étape échoue, on revert la base pour qu’elle reste cohérente.
          * ================================================================ */
         $pdo->beginTransaction();
 
@@ -2392,58 +2253,83 @@ function updateProduct($data)
 
 
 
-// --- Nouvelles fonctions à ajouter dans fonctions.php ---
+
+
+
+
+// --- Fonctions utilitaires pour la base de données (fonctions.php) ---
+
+/**
+ * Fonction générique pour récupérer une liste d'IDs depuis une table de liaison (many-to-many).
+ *
+ * @param PDO    $pdo         L'objet de connexion.
+ * @param string $tableName   Le nom de la table de liaison (ex: 'produit_tag').
+ * @param string $idColumn    Le nom de la colonne d'ID à récupérer (ex: 'id_tag').
+ * @param int    $relatedId   L'ID de l'entité principale (ex: l'id du produit).
+ *
+ * @return array La liste des IDs trouvés.
+ */
+function getRelatedIds(PDO $pdo, string $tableName, string $idColumn, int $relatedId): array
+{
+ 
+    $sql = "SELECT " . $pdo->quote($idColumn) . " FROM " . $pdo->quote($tableName) . " WHERE id_produit = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$relatedId]);
+    
+    return $stmt->fetchAll(PDO::FETCH_COLUMN);
+}
+
 
 /**
  * Récupère les IDs des tags associés à un produit.
- * Nécessaire pour pré-cocher les bonnes cases dans le formulaire d'édition.
  * @param PDO $pdo L'objet de connexion PDO.
  * @param int $idProduit L'ID du produit.
  * @return array La liste des IDs de tags.
  */
-function getProductTagIds($pdo, $idProduit) {
-    $stmt = $pdo->prepare("SELECT id_tag FROM produit_tag WHERE id_produit = ?");
-    $stmt->execute([$idProduit]);
-    $ids = [];
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $ids[] = $row['id_tag'];
-    }
-    return $ids;
+function getProductTagIds(PDO $pdo, int $idProduit): array 
+{
+    return getRelatedIds($pdo, 'produit_tag', 'id_tag', $idProduit);
 }
 
 /**
  * Récupère les IDs des auteurs associés à un livre.
- * Nécessaire pour pré-sélectionner les bons auteurs dans le formulaire d'édition.
  * @param PDO $pdo L'objet de connexion PDO.
  * @param int $idProduit L'ID du produit (livre).
  * @return array La liste des IDs d'auteurs.
  */
-function getProductAuthorIds($pdo, $idProduit) {
-    $stmt = $pdo->prepare("SELECT id_auteur FROM livre_auteur WHERE id_produit = ?");
-    $stmt->execute([$idProduit]);
-    $ids = [];
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $ids[] = $row['id_auteur'];
-    }
-    return $ids;
+function getProductAuthorIds(PDO $pdo, int $idProduit): array 
+{
+    return getRelatedIds($pdo, 'livre_auteur', 'id_auteur', $idProduit);
 }
 
 /**
- * Valide un format d'email de manière orthodoxe.
- * La doctrine n'enseignant pas filter_var, cette fonction se contente de
- * vérifier la présence d'un caractère '@', ce qui est une validation minimale
- * mais conforme aux outils du cours.
+ * Valide le format d'une adresse email en utilisant une expression régulière.
+ * Elle impose une structure 'local-part@domain-part.tld'.
+ *
  * @param string $email L'adresse email à valider.
- * @return bool TRUE si l'email contient un '@', FALSE sinon.
+ * @return bool TRUE si le format de l'email est valide, FALSE sinon.
  */
-function validate_email($email)
+function validate_email(string $email): bool
 {
-    // strpos() recherche la position de la première occurrence d'une sous-chaîne.
-    // Si '@' n'est pas trouvé, strpos retourne false. Sinon, il retourne la position (un nombre >= 0).
-    if (strpos($email, '@') === false) {
-        return false;
-    }
-    return true;
+    $pattern = '#^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$#';
+
+    // preg_match retourne 1 si le pattern est trouvé, 0 sinon, et false en cas d'erreur.
+    return preg_match($pattern, $email) === 1;
 }
 
+/**
+ * Transforme une date SQL 'YYYY-MM-DD HH:MM:SS' en format français 'DD/MM/YYYY'.
+ * @param string $date_mysql La date au format BDD.
+ * @return string La date au format français.
+ */
+function format_date($date_mysql)
+{
+    if (strlen($date_mysql) >= 10) {
+        $annee = substr($date_mysql, 0, 4);
+        $mois = substr($date_mysql, 5, 2);
+        $jour = substr($date_mysql, 8, 2);
+        return $jour . '/' . $mois . '/' . $annee;
+    }
+    return ''; // Retourne une chaîne vide si le format est incorrect.
+}
 ?>

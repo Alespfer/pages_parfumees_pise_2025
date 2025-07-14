@@ -10,14 +10,22 @@
  *  - Une protection simple contre les soumissions multiples et les bots.
  */
 
+
+session_start();
 require_once 'parametrage/param.php';
 require_once 'fonction/fonctions.php';
+
+$activePage = 'contact'; 
+
 
 require_once 'partials/header.php';
 
 /***************************************************************************
- * SECTION 1 : INITIALISATION ET PRÉPARATION DES DONNÉES                                             *
+ * SECTION 1 : INITIALISATION ET PRÉPARATION DES DONNÉES                                             
  ***************************************************************************/
+
+// On détermine la vue à afficher : 'form' pour le formulaire (par défaut), 'faq' pour la FAQ.
+$view = isset($_GET['view']) ? $_GET['view'] : 'form';
 // On initialise toutes les variables dont on aura besoin pour éviter les erreurs "undefined".
 $erreurs = [];
 $nom = '';
@@ -26,13 +34,35 @@ $sujet = '';
 $message = '';
 $est_connecte = false;
 
-// On vérifie si un utilisateur est connecté en inspectant la session.
 
-if (isset($_SESSION['user']) && isset($_SESSION['user']['id_client'])) {
-    $est_connecte = true;
-    $nom = $_SESSION['user']['prenom'] . ' ' . $_SESSION['user']['nom'];
-    $email = $_SESSION['user']['email'];
+// On définit le titre de la page en fonction de la vue
+if ($view === 'faq') {
+    $pageTitle = "Foire Aux Questions";
+    // On prépare les données pour la FAQ. Idéalement, ça viendrait d'une BDD.
+    $faq_sections = [
+        'Produits' => [
+            'Quels types de livres vendez-vous ?' => 'Nous vendons des livres d’occasion soigneusement sélectionnés : romans, essais, poésie, livres jeunesse… Tous sont en bon état, avec parfois une touche vintage charmante.',
+            'Que contiennent vos coffrets ?' => 'Nos coffrets combinent un livre, une bougie parfumée assortie, et parfois une surprise littéraire. Chaque coffret est préparé avec soin, prêt à offrir ou à s’offrir.'
+        ],
+        'Livraison' => [
+            'Quels sont les délais de livraison ?' => 'Nous expédions sous 2 à 4 jours ouvrés. Les délais de livraison varient ensuite selon votre lieu de résidence, entre 2 à 5 jours pour la France métropolitaine.',
+            'Livrez-vous à l’international ?' => 'Oui, nous livrons dans plusieurs pays d’Europe. Les frais et délais varient selon la destination. Vous verrez les options disponibles lors du passage en caisse.'
+        ],
+        'Retours et remboursement' => [
+            'Puis-je retourner un produit ?' => 'Oui. Vous disposez de 14 jours après réception pour nous retourner un produit non utilisé et dans son emballage d’origine.',
+            'Combien de temps faut-il pour être remboursé ?' => 'Une fois le retour reçu et vérifié, le remboursement est effectué sous 5 à 7 jours ouvrés sur votre mode de paiement initial.'
+        ]
+    ];
+} else {
+    $pageTitle = "Nous Contacter";
+    // On vérifie si un utilisateur est connecté pour pré-remplir les champs.
+    if (isset($_SESSION['user']) && isset($_SESSION['user']['id_client'])) {
+        $est_connecte = true;
+        $nom = $_SESSION['user']['prenom'] . ' ' . $_SESSION['user']['nom'];
+        $email = $_SESSION['user']['email'];
+    }
 }
+
 
 /***************************************************************************
  * SECTION 2 : TRAITEMENT FORMULAIRE                                       *
@@ -49,10 +79,10 @@ if (isset($_POST['submit_contact']) && !isset($_SESSION['contact_envoye'])) {
 
     if (!$est_connecte) {
         if (isset($_POST['name'])) {
-            $nom = purifier_trim($_POST['name']);
+            $nom = trim($_POST['name']);
         }
         if (isset($_POST['email'])) {
-            $email = purifier_trim($_POST['email']);
+            $email = trim($_POST['email']);
         }
     }
 
@@ -60,10 +90,10 @@ if (isset($_POST['submit_contact']) && !isset($_SESSION['contact_envoye'])) {
     // On récupère les autres champs du formulaire.
 
     if (isset($_POST['subject'])) {
-        $sujet = purifier_trim($_POST['subject']);
+        $sujet = trim($_POST['subject']);
     }
     if (isset($_POST['message'])) {
-        $message = purifier_trim($_POST['message']);
+        $message = trim($_POST['message']);
     }
 
     // --- Phase de validation des données ---
@@ -103,73 +133,104 @@ if (isset($_POST['submit_contact']) && !isset($_SESSION['contact_envoye'])) {
      SECTION 3 : AFFICHAGE HTML (LA VUE)
 ========================================================================= -->
 
-<div class="contact-container">
-    <?php if (isset($_SESSION['contact_envoye'])) { ?>
-        <!-- Vue de succès : affichée si le message a bien été envoyé. -->
-        <div class="contact-success">
-            <h2>Merci pour votre message !</h2>
-            <p>Nous reviendrons vers vous dans les plus brefs délais.</p>
-            <a href="shop.php" class="btn btn-primary">Retour à la boutique</a>
-        </div>
-    <?php } else { ?>
-        <!-- Vue du formulaire : affichée par défaut ou en cas d'erreur. -->
+<?php if ($view === 'faq') { ?>
+    <!-- ================== VUE FAQ ================== -->
+    <div class="text-center mb-5">
+        <h1><?php echo htmlspecialchars($pageTitle); ?></h1>
+        <p class="lead">Un espace pour répondre à toutes vos questions.</p>
+    </div>
 
-        <h1>Nous Contacter</h1>
-
-        <?php if (count($erreurs) > 0) { ?>
-            <div class="contact-errors">
-                <strong>Veuillez corriger les erreurs suivantes :</strong>
-                <ul>
-                    <?php foreach ($erreurs as $e) { ?>
-                        <li><?php echo htmlspecialchars($e); ?></li>
-                    <?php } ?>
-                </ul>
+    <div class="faq-container">
+        <?php foreach ($faq_sections as $section_title => $questions) { ?>
+            <h2 class="faq-section-title"><?php echo htmlspecialchars($section_title); ?></h2>
+            <div class="accordion">
+                <?php foreach ($questions as $question => $answer) { ?>
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span><?php echo htmlspecialchars($question); ?></span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <p><?php echo htmlspecialchars($answer); ?></p>
+                        </div>
+                    </div>
+                <?php } ?>
             </div>
-        <?php } ?>
+        <?php }  ?>
+    </div>
 
-        <?php if ($est_connecte) { ?>
-            <!-- Message de bienvenue si l'utilisateur est connecté. -->
-            <div class="contact-greeting">
-                Bonjour <strong><?php echo htmlspecialchars($nom); ?></strong>, nous sommes à votre écoute.
+<?php } else { ?>
+    <!-- ================== VUE FORMULAIRE DE CONTACT ================== -->
+    <div class="contact-container">
+        <?php
+        // On vérifie la variable $_SESSION['contact_envoye'] qui est définie lors d'un envoi réussi.
+        if (isset($_SESSION['contact_envoye'])) { ?>
+            <!-- Vue de succès : affichée après redirection. -->
+            <div class="contact-success text-center">
+                <h2>Merci pour votre message !</h2>
+                <p>Nous reviendrons vers vous dans les plus brefs délais.</p>
+                <a href="shop.php" class="btn btn-primary mt-3">Retour à la boutique</a>
             </div>
-        <?php } ?>
+            <?php  ?>
+        <?php } else { ?>
+            <!-- Vue du formulaire : affichée par défaut ou en cas d'erreur. -->
+            <h1 class="text-center"><?php echo htmlspecialchars($pageTitle); ?></h1>
 
-        <form action="contact.php" method="POST" class="contact-form">
-            <?php if (!$est_connecte) { ?>
-                <!-- Si l'utilisateur n'est pas connecté, on affiche les champs nom et email. -->
-                <!-- S'il est connecté, on passe son nom et email en champs cachés. -->
-                <div class="form-group">
-                    <label for="name">Votre nom</label>
-                    <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($nom); ?>" required>
+            <?php if (count($erreurs) > 0) { ?>
+                <div class="alert alert-danger">
+                    <strong>Veuillez corriger les erreurs suivantes :</strong>
+                    <ul>
+                        <?php foreach ($erreurs as $e) { ?>
+                            <li><?php echo htmlspecialchars($e); ?></li>
+                        <?php }  ?>
+                    </ul>
                 </div>
-                <div class="form-group">
-                    <label for="email">Votre email</label>
-                    <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
+            <?php }  ?>
+
+            <?php if ($est_connecte) { ?>
+                <div class="alert alert-info text-center">
+                    Bonjour <strong><?php echo htmlspecialchars($_SESSION['user']['prenom']); ?></strong>, nous sommes à votre
+                    écoute.
                 </div>
-            <?php } else { ?>
-                <input type="hidden" name="name" value="<?php echo htmlspecialchars($nom); ?>">
-                <input type="hidden" name="email" value="<?php echo htmlspecialchars($email); ?>">
             <?php } ?>
 
+            <form action="contact.php" method="POST" class="contact-form">
+                <?php if (!$est_connecte) { ?>
+                    <div class="form-group mb-3">
+                        <label for="name" class="form-label">Votre nom</label>
+                        <input type="text" id="name" name="name" class="form-control" value="<?php echo htmlspecialchars($nom); ?>"
+                            required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="email" class="form-label">Votre email</label>
+                        <input type="email" id="email" name="email" class="form-control"
+                            value="<?php echo htmlspecialchars($email); ?>" required>
+                    </div>
+                <?php }  ?>
 
-            <div class="form-group">
-                <label for="subject">Sujet</label>
-                <input type="text" id="subject" name="subject" value="<?php echo htmlspecialchars($sujet); ?>" required>
-            </div>
-            <div class="form-group">
-                <label for="message">Votre message</label>
-                <textarea id="message" name="message" rows="6" required><?php echo htmlspecialchars($message); ?></textarea>
-            </div>
-            <!-- Champ "Honeypot" anti-bot. Il est caché aux humains. -->
-            <div style="display:none;" aria-hidden="true">
-                <label for="website">Ne pas remplir</label>
-                <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
-            </div>
+                <div class="form-group mb-3">
+                    <label for="subject" class="form-label">Sujet</label>
+                    <input type="text" id="subject" name="subject" class="form-control"
+                        value="<?php echo htmlspecialchars($sujet); ?>" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="message" class="form-label">Votre message</label>
+                    <textarea id="message" name="message" class="form-control" rows="6"
+                        required><?php echo htmlspecialchars($message); ?></textarea>
+                </div>
 
-            <button type="submit" class="btn btn-primary">Envoyer le message</button>
-        </form>
-    <?php } ?>
-</div>
+                <div style="display:none;" aria-hidden="true">
+                    <label for="website">Ne pas remplir</label>
+                    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100" name="submit_contact">Envoyer le message</button>
+            </form>
+        <?php }  ?>
+    </div>
+<?php } ?>
+</main>
 
 <?php
 require_once 'partials/footer.php';
+?>

@@ -100,7 +100,7 @@ require('partials/header.php');
             <input type="hidden" name="action" value="update">
 
             <div class="table-responsive">
-                <table class="table table-bordered align-middle">
+                <table class="table table-bordered align-middle panier-table">
                     <thead class="table-light">
                         <tr>
                             <th>Produit</th>
@@ -132,12 +132,14 @@ require('partials/header.php');
             </div>
 
             <div class="d-flex justify-content-end mb-4">
-                <button type="submit" class="btn btn-primary">Mettre à jour les quantités</button>
+                <button type="submit" class="btn btn-primary"> 
+                    Mettre à jour les quantités
+                </button>
             </div>
         </form>
 
         <div class="row justify-content-end">
-            <div class="col-md-5">
+            <div class="col-md-5"> 
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h3 class="card-title">Total de la commande</h3>

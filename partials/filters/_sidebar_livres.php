@@ -1,7 +1,7 @@
 <?php
 /*
  * Fichier partiel : _sidebar_livres.php
- * Rôle : Affiche les options de filtre spécifiques aux livres.
+ * Affiche les options de filtre spécifiques aux livres.
  */
 ?>
 <!-- Filtre par prix -->
@@ -21,8 +21,7 @@
     if (isset($view_data['genres']) && count($view_data['genres']) > 0) {
         foreach ($view_data['genres'] as $genre) {
             $est_coche = false;
-            // Vérification orthodoxe pour savoir si la case doit être cochée
-            if (isset($filtres['genres'])) { // is_array est une déviance nécessaire pour la robustesse
+            if (isset($filtres['genres'])) { 
                 if (in_array($genre['id_genre'], $filtres['genres'])) {
                     $est_coche = true;
                 }

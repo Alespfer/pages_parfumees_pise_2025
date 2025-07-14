@@ -2,58 +2,99 @@
 /**
  * Fichier : /partials/footer.php
  * Rôle : Pied de page commun à toutes les pages du site.
- * Il ferme la structure HTML et charge les scripts JS.
  */
 ?>
+</main> <!-- Fermeture de la balise <main> ouverte dans chaque page -->
 
-    </main> <!-- Fermeture de la balise <main> ouverte dans chaque page de contenu -->
+<footer class="main-footer">
+    <div class="container">
+        <div class="main-footer__grid">
 
-    <!-- =================================================================== -->
-    <!--                            PIED DE PAGE                             -->
-    <!-- =================================================================== -->
-    <footer class="bg-dark text-white mt-5 py-4">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <h5>À propos</h5>
-                    <p class="text-white-50">L'Atelier des Mots & Lumières, votre boutique de livres d'occasion et de bougies artisanales pour des ambiances uniques.</p>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <h5>Liens utiles</h5>
-                    <ul class="list-unstyled">
-                        <!-- Note: Ces liens ne fonctionneront que si vous créez les pages correspondantes -->
-                        <li><a href="contact.php" class="text-white-50">Contactez-nous</a></li>
-                        <li><a href="#" class="text-white-50">Mentions Légales</a></li>
-                        <li><a href="#" class="text-white-50">Conditions Générales de Vente</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <h5>Suivez-nous</h5>
-                    <!-- Ici, vous pourriez ajouter des icônes de réseaux sociaux -->
-                    <a href="#" class="text-white-50">Facebook</a> | 
-                    <a href="#" class="text-white-50">Instagram</a>
-                </div>
+            <div class="main-footer__column">
+                <h4>Les Pages Parfumées</h4>
+                <p>
+                    Une sélection de livres, bougies et coffrets pour des moments de lecture uniques et apaisants.
+                </p>
             </div>
-            <div class="row mt-3">
-                <div class="col text-center">
-                    <p class="text-white-50 mb-0">© <?php echo date('Y'); ?> - L'Atelier des Mots & Lumières. Projet universitaire réalisé par [Votre Nom].</p>
-                </div>
+
+            <div class="main-footer__column">
+                <h4>Service Client</h4>
+                <ul>
+                    <li><a href="contact.php?view=faq">Questions fréquentes (FAQ)</a></li>
+                    <li><a href="#">Livraison & Retours</a></li>
+                    <li><a href="contact.php">Nous Contacter</a></li>
+                    <li><a href="#">Mentions Légales</a></li>
+                </ul>
             </div>
+
+            <div class="main-footer__column">
+                <h4>Mon Compte</h4>
+                <ul>
+                    <li><a href="<?php echo isset($_SESSION['user']) ? 'mon_compte.php' : 'auth.php'; ?>">Mon Compte</a>
+                    </li>
+                    <li><a href="<?php echo isset($_SESSION['user']) ? 'mon_compte.php' : 'auth.php'; ?>">Suivre ma
+                            commande</a></li>
+                    <li><a href="panier.php">Mon Panier</a></li>
+                </ul>
+            </div>
+            <div class="main-footer__socials">
+                    <a href="#" title="Facebook"><img src="ressources/reseaux/facebook.png" alt="Facebook"></a>
+                    <a href="#" title="Instagram"><img src="ressources/reseaux/insta.png" alt="Instagram"></a>
+                    <a href="#" title="TikTok"><img src="ressources/reseaux/tiktok.png" alt="TikTok"></a>
+                    <a href="#" title="Linkedin"><img src="ressources/reseaux/linkedin.png" alt="Linkedin"></a>
+                    <a href="#" title="Youtube"><img src="ressources/reseaux/youtube.png" alt="Youtube"></a>
+
+            </div>
+
+
         </div>
-    </footer>
+        <div class="main-footer__copyright">
+            © <?php echo date('Y'); ?> Les Pages Parfumées. Tous droits réservés.
+        </div>
+    </div>
+</footer>
+
+<!-- ===================================================
+     SCRIPTS JAVASCRIPT
+     =================================================== -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const accordionItems = document.querySelectorAll('.accordion-item');
+
+        accordionItems.forEach(item => {
+            const header = item.querySelector('.accordion-header');
+            const content = item.querySelector('.accordion-content');
+            const icon = item.querySelector('.accordion-icon');
+
+            header.addEventListener('click', () => {
+                const isActive = item.classList.contains('active');
+
+                // Ferme tous les autres items
+                accordionItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                       otherItem.classList.remove('active');
+                       otherItem.querySelector('.accordion-content').style.maxHeight = null;
+                       otherItem.querySelector('.accordion-icon').textContent = '+';
+                    }
+                });
+                
+                // Ouvre ou ferme l'item cliqué
+                if (!isActive) {
+                    item.classList.add('active');
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                    icon.textContent = '−';
+                } else {
+                    // Si on reclique sur l'item déjà ouvert, on le ferme
+                    item.classList.remove('active');
+                    content.style.maxHeight = null;
+                    icon.textContent = '+';
+                }
+            });
+        });
+    });
+</script>
 
 
-    <!-- =================================================================== -->
-    <!--                      SCRIPTS JAVASCRIPT                             -->
-    <!-- =================================================================== -->
-    <!-- Les scripts sont placés à la fin pour un chargement plus rapide de la page. -->
-    <!-- Pour que les composants Bootstrap (comme le menu déroulant) fonctionnent, -->
-    <!-- il faut inclure jQuery, puis Popper.js, puis le JavaScript de Bootstrap. -->
-    <!-- (Version pour Bootstrap 4) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-   
 </body>
-</html>
 
-</body>
 </html>
