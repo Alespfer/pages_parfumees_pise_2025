@@ -1,0 +1,16 @@
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+
+
+# Vendor directory for PHP dependencies (if using Composer)
+vendor/
+
+# User-uploaded content (to avoid committing test uploads)
+ressources/livres/
+ressources/bougies/
+ressources/coffrets/
+
+# Log files
+*.log
